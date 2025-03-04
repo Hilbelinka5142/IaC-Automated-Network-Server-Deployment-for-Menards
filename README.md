@@ -1,2 +1,2 @@
 # IaC-Automated-Network-Server-Deployment-for-Menards
-CNIT490 Medard's capstone project 2025
+CNIT490 Menard's capstone project 2025
