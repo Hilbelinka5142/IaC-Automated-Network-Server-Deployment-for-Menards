@@ -1,0 +1,29 @@
+# list of useful commands to go through with server
+# check if ssh works
+# check ssh key files
+
+# on deployment machine
+ssh-keygen -t ed25519 -C "ansible"
+
+# copy ssh key to the server
+ssh-copy-id i ~/.ssh/ansible.pub <ip address>
+
+# ansible ad-hoc commands hosts
+ansible all -m ping
+ansible all --list-hosts
+
+
+
+
+
+
+# using git
+git add <new file create/edited or .>
+git commit -m "message of what was changed"
+git push origin mastar
+
+# change git configs on deployment machine
+git config --global user.name "Deployment VM"
+git config --global user.email "nsat-menards-capstone2025@live.uwstout.edu"
+
+
