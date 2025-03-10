@@ -1,2 +1,13 @@
-[hosts]
-10.0.1.40
+[vmware]
+esxi ansible_host=10.0.1.40 ansible_connection=local
+
+
+[fortigate]
+NSAT-Firewall ansible_host=10.0.1.1 ansible_user=admin ansible_connection=httpapi
+
+[fortigate:vars]
+ansible_httpapi_use_ssl=yes
+ansible_httpapi_validate_certs=no
+ansible_network_os=fortinet.fortios.fortios
+ansible_password=''
+ansible_httpapi_port=443
