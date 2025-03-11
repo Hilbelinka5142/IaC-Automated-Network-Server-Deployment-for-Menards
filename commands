@@ -6,7 +6,7 @@
 ssh-keygen -t ed25519 -C "ansible"
 
 # copy ssh key to the server
-ssh-copy-id i ~/.ssh/ansible.pub <ip address>
+ssh-copy-id i ~/.ssh/ansible.pub <ip address> root@10.0.1.40
 
 # ansible ad-hoc commands hosts
 ansible all -m ping
