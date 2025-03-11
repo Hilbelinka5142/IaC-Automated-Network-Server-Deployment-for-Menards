@@ -3,7 +3,7 @@ esxi ansible_host=10.0.1.40 ansible_connection=local
 
 
 [fortigate]
-NSAT-Firewall ansible_host=10.0.1.1 ansible_user=admin ansible_connection=httpapi
+NSAT-Firewall ansible_host=10.0.1.1 ansible_user=Ansible ansible_password=password ansible_connection=httpapi
 
 [fortigate:vars]
 ansible_httpapi_use_ssl=yes
