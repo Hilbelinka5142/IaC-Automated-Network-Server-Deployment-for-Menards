@@ -1,2 +1,5 @@
-[hosts]
-10.0.1.40
+[esxi]
+esxi.menards.local
+
+[firewall]
+firewall.mendards.local
