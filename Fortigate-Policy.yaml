@@ -6,15 +6,14 @@
 
   vars:
     fortigate_host: "10.0.1.1" 
-    fortigate_username: "admin"
-    fortigate_password: ""
+    fortigate_username: "Ansible"
+    fortigate_password: "password"
     policy_id: "4"
     src_intf: "vlan30"
     dst_intf: "vlan10"
     src_addr: "10.0.3.11"
     dst_addr: "all"
     service: "SSH"
-    action: "accept"
 
   tasks:
     - name: Create Firewall Policy
@@ -32,7 +31,7 @@
             - name: "{{ src_addr }}"
           dstaddr:
             - name: "{{ dst_addr }}"
-          action: "{{ action }}"
+          action: "accept"
           schedule: "always"
           service:
             - name: "{{ service }}"
@@ -40,7 +39,7 @@
           nat: "enable"
 
     - name: Commit Changes
-      fortinet.fortios.fortios_system_config:
+      fortinet.fortios.fortios_system_global:
         vdom: "root"
         access_token: "{{ fortigate_password }}"
         system_config:
