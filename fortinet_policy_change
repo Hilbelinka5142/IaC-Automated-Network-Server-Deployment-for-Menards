@@ -1,0 +1,39 @@
+---
+- name: Configure Fortinet Firewall Policy using SSH
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: Read firewall configuration from JSON file
+      ansible.builtin.slurp:
+        src: "{{ playbook_dir }}/temp/firewall_config.json"
+      register: firewall_config
+
+    - name: Parse JSON content into Ansible variables
+      ansible.builtin.set_fact:
+        config: "{{ firewall_config['content'] | b64decode | from_json }}"
+
+  tasks:
+    - name: Copy Python script to remote device
+      ansible.builtin.copy:
+        src: configure_firewall.py
+        dest: /tmp/configure_firewall.py
+        mode: '0755'
+
+    - name: Run Python script with variables from the web server
+      ansible.builtin.command: >
+        python3 /tmp/configure_firewall.py
+        --host {{ fortigate_host }}
+        --username {{ fortigate_username }}
+        --password {{ fortigate_password }}
+        --policy_id {{ policy_id }}
+        --src_intf {{ src_intf }}
+        --dst_intf {{ dst_intf }}
+        --src_addr {{ src_addr }}
+        --dst_addr {{ dst_addr }}
+        --service {{ service }}
+      register: script_output
+    - name: Show Python script output
+        debug:
+          var: script_output.stdout
