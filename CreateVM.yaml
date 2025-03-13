@@ -1,0 +1,45 @@
+---
+- hosts: esxi
+  tasks:
+  - name: check if virtual machine esists
+    community.vmware.vmware_guest_info:
+      validate_certs: false
+      hostname: 10.0.1.40
+      username: "root"
+      password: "CNIT490sp25"
+      datacenter: "ha-datacenter"
+      name: "Web_Server"
+    delegate_to: localhost
+    ignore_errors: true
+    throttle: 1
+
+  - name: create VM
+    community.vmware.vmware_guest:
+     validate_certs: false
+     hostname: "10.0.1.40"
+     username: "root"
+     password: "CNIT490sp25"
+     datacenter: "ha-datacenter"
+     folder: "/vm/"
+     name: Test_VM
+     state: poweredon
+     guest_id: Ubuntu64Guest
+     disk:
+     - size_gb: 10
+       type: thin
+       datastore: VMs
+     hardware:
+       memory_mb: 512
+       num_cpus: 4
+     networks:
+     - name: VLAN30 - host VMs
+       dns_servers: 10.0.1.50
+       type: dhcp
+     cdrom:
+       - controller_number: 0
+         unit_number: 0
+         state: present 
+         type: iso
+         iso_path: "[VMs] Ubuntu Files/ubuntu-24.04.2-live-server-amd64.iso"
+    delegate_to: localhost
+    ignore_errors: true
