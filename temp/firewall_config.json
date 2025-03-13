@@ -1,0 +1,11 @@
+{
+    "fortigate_host": "10.0.1.1",
+    "fortigate_username": "Anisble",
+    "fortigate_password": "password",
+    "policy_id": "4",
+    "src_intf": "vlan30",
+    "dst_intf": "vlan10",
+    "src_addr": "10.0.3.11",
+    "dst_addr": "all",
+    "service": "SSH"
+}
