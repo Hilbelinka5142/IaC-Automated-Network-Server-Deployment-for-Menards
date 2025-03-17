@@ -1,0 +1,17 @@
+esxi:
+  hostsname: "10.0.1.40"
+  username: "root"
+  password: "CNIT490sp25"
+
+  # Using
+  #
+  # vars_files:
+  # - vars/main.yml
+  #
+  # Example: 
+  #   "{{ esxi.hostname }}"
+  #   "{{ esxi.username }}"
+  #
+  # If you call a variable but don't define it, ansible will prompt for input.  But might want to use Python for this
+  #
+  # This within a playbook will allow the use of these variables
