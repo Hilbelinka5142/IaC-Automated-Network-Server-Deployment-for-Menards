@@ -1,0 +1,16 @@
+---
+- name: Create DHCP scope and options
+  hosts: winServer
+  gather_facts: no
+  become: yes
+  become_method: runas
+# Creates a DHCP scope with running shell commands. Should change name, starting/ending range with variables
+  tasks:
+    - name: Create DHCP scope
+      win_shell: Add-DhcpServerv4Scope -Name "Test Scope" -StartRange 192.168.100.1 -EndRange 192.168.100.45 -SubnetMask 255.255.255.0
+      register: dhcp_scope_results
+      vars:
+        ansible_become_method: runas
+        ansible_become_user: "{{ win_user }}"
+        ansible_become_password: "{{ win_pass }}"
+      ignore_errors: yes
