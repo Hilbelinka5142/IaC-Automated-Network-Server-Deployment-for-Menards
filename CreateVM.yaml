@@ -1,31 +1,27 @@
 ---
 - hosts: esxi
-  tasks:
-  - name: check if virtual machine esists
-    community.vmware.vmware_guest_info:
-      validate_certs: false
-      hostname: 10.0.1.40
-      username: "root"
-      password: "CNIT490sp25"
-      datacenter: "ha-datacenter"
-      name: "Web_Server"
-    delegate_to: localhost
-    ignore_errors: true
-    throttle: 1
+  vars_files:
+  - vars/main.yaml
+#  vars_prompt:
+#    - name: disksize
+#      prompt: How big is the storage?
+#      private: no
 
+  tasks:
   - name: create VM
     community.vmware.vmware_guest:
      validate_certs: false
-     hostname: "10.0.1.40"
-     username: "root"
-     password: "CNIT490sp25"
-     datacenter: "ha-datacenter"
+     hostname: "{{ esxi.hostname }}"
+     username: "{{ esxi.username }}"
+     password: "{{ esxi.password }}"
+     datacenter: "{{ esxi.datacenter }}"
      folder: "/vm/"
-     name: Test_VM
-     state: poweredon
+     name: "{{ vmName }}"
+     state: poweredoff
      guest_id: Ubuntu64Guest
      disk:
-     - size_gb: 10
+#     - size_gb: "{{ disksize }}"
+     - size_gb: 5
        type: thin
        datastore: VMs
      hardware:
