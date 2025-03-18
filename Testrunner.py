@@ -1,16 +1,18 @@
-import ansible_runner
+import subprocess
 
-r = ansible_runner.run(
-    inventory = 'inventory',
-    module = 'ping',
-    host_pattern='esxi',
-    extravars={
-        'ansible_user': 'root',
-        'ansible_password': 'password'
-    }
-)
+vmName = input("Enter the VM Name: ")
 
-if r.status == 'successful':
-    print('The playbook was run successfully')
-else:
-    print('The playbook failed')
+playbook = "CreateVM.yaml"
+
+extra_vars = f"vmName={vmName}"
+
+try:
+   results = subprocess.run(
+	["ansible-playbook", playbook, "--extra-vars", extra_vars],
+	check=True,
+	text=True,
+	capture_output=True
+   )
+   print("Playbook Output:\n", results.stdout)
+except subprocess.CalledProcessError as e:
+   print("Error running playbook:\n", e.stderr)
