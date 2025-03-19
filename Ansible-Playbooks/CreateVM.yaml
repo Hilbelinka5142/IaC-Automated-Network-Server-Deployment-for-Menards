@@ -8,6 +8,11 @@
 #      private: no
 
   tasks:
+  - name: Ask user for VM duration
+    pause:
+      prompt: "How many days do you need this VM?"
+    register: howLong
+
   - name: create VM
     community.vmware.vmware_guest:
      validate_certs: false
@@ -39,3 +44,12 @@
          iso_path: "[VMs] Ubuntu Files/ubuntu-24.04.2-live-server-amd64.iso"
     delegate_to: localhost
     ignore_errors: true
+
+  - name: Calculate deletion time
+    set_fact:
+      deletion_time: "{{ '%Y-%m-%d %H:%M:%S' | strftime('%s') | int + (howLong.howLong | int * 86400) }}"
+
+  - name: Schedule VM deletion 
+    ansible.builtin.command:
+      cmd: |
+        echo "/usr/bin/ansible-playbook delete_vm.yml" | at now + {{ howLong.howLong }} days
