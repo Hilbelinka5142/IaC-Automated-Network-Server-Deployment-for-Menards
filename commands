@@ -17,7 +17,8 @@ ansible all --list-hosts
 # using git
 git add <new file create/edited or .>
 git commit -m "message of what was changed"
-git push origin mastar
+git pull origin main
+git push origin main
 
 # change git configs on deployment machine
 git config --global user.name "Deployment VM"
