@@ -1,47 +1,52 @@
 ---
-- hosts: esxi
+- name: Delete a Virtual Machine if it exists
+  hosts: localhost
+  gather_facts: no
   vars_files:
-    - /home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml
+    - automation-frontend/vars.yaml
 
   tasks:
-    - name: Calculate duration (days) between now and expiration date
-      set_fact:
-        vm_lifetime_days: "{{ ((expiration | to_datetime('%Y-%m-%d')) - (ansible_date_time.date | to_datetime('%Y-%m-%d'))).days }}"
 
-    - name: Create VM based on form input
-      community.vmware.vmware_guest:
-        validate_certs: false
+    - name: Check if VM exists
+      community.vmware.vmware_guest_info:
         hostname: "{{ esxi.hostname }}"
         username: "{{ esxi.username }}"
         password: "{{ esxi.password }}"
+        validate_certs: false
+        name: "{{ vm_name }}"
         datacenter: "{{ esxi.datacenter }}"
-        folder: "/vm/"
+      register: vm_info
+      failed_when: false
+      delegate_to: localhost
+
+    - name: Fail if VM was not found
+      ansible.builtin.fail:
+        msg: "VM '{{ vm_name }}' not found. Cannot delete."
+      when: vm_info.failed or vm_info.virtual_machines is not defined
+
+    - name: Power off VM if it is running
+      community.vmware.vmware_guest_powerstate:
+        hostname: "{{ esxi.hostname }}"
+        username: "{{ esxi.username }}"
+        password: "{{ esxi.password }}"
+        validate_certs: false
         name: "{{ vm_name }}"
         state: poweredoff
-        guest_id: >-
-          {{ 'windows9Server64Guest' if os == 'Windows' else 'Ubuntu64Guest' }}
-        disk:
-          - size_gb: "{{ storage }}"
-            type: thin
-            datastore: VMs
-        hardware:
-          memory_mb: "{{ memory | int * 1024 // 1 }}"
-          num_cpus: "{{ cpu }}"
-        networks:
-          - name: VLAN30 - host VMs
-            dns_servers: 10.0.1.50
-            type: dhcp
-        cdrom:
-          - controller_number: 0
-            unit_number: 0
-            state: present 
-            type: iso
-            iso_path: >-
-              {{ '[VMs] ISOs/SERVER_EVAL_x64FRE_en-us.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-24.04.2-live-server-amd64.iso' }}
+        datacenter: "{{ esxi.datacenter }}"
+      when: vm_info.virtual_machines[0].power_state == "poweredOn"
       delegate_to: localhost
-      ignore_errors: true
 
-    - name: Schedule VM deletion using calculated expiration days
-      ansible.builtin.command:
-        cmd: |
-          echo "/usr/bin/ansible-playbook delete_vm.yml" | at now + {{ vm_lifetime_days }} days
+    - name: Delete the VM
+      community.vmware.vmware_guest:
+        hostname: "{{ esxi.hostname }}"
+        username: "{{ esxi.username }}"
+        password: "{{ esxi.password }}"
+        validate_certs: false
+        name: "{{ vm_name }}"
+        datacenter: "{{ esxi.datacenter }}"
+        state: absent
+      delegate_to: localhost
+
+    - name: Confirm deletion
+      debug:
+        msg: "VM '{{ vm_name }}' has been deleted successfully."
