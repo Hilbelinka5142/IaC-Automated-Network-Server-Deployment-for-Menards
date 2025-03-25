@@ -4,6 +4,10 @@
   connection: local
   gather_facts: no
 
+  
+  vars:
+  ansible_python_interpreter: "/home/deploymentvm/Desktop/newenv/bin/python" 
+
   tasks:
     - name: Read firewall configuration from JSON file
       ansible.builtin.slurp:
