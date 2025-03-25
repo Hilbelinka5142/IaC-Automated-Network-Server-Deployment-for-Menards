@@ -14,26 +14,26 @@
       ansible.builtin.set_fact:
         config: "{{ firewall_config['content'] | b64decode | from_json }}"
 
-  tasks:
     - name: Copy Python script to remote device
       ansible.builtin.copy:
         src: configure_firewall.py
         dest: /tmp/configure_firewall.py
         mode: '0755'
 
-    - name: Run Python script with variables from the web server
+    - name: Run Python script with variables from the JSON config
       ansible.builtin.command: >
         python3 /tmp/configure_firewall.py
-        --host {{ fortigate_host }}
-        --username {{ fortigate_username }}
-        --password {{ fortigate_password }}
-        --policy_id {{ policy_id }}
-        --src_intf {{ src_intf }}
-        --dst_intf {{ dst_intf }}
-        --src_addr {{ src_addr }}
-        --dst_addr {{ dst_addr }}
-        --service {{ service }}
+        --host {{ config.fortigate_host }}
+        --username {{ config.fortigate_username }}
+        --password {{ config.fortigate_password }}
+        --policy_id {{ config.policy_id }}
+        --src_intf {{ config.src_intf }}
+        --dst_intf {{ config.dst_intf }}
+        --src_addr {{ config.src_addr }}
+        --dst_addr {{ config.dst_addr }}
+        --service {{ config.service }}
       register: script_output
+
     - name: Show Python script output
-        debug:
-          var: script_output.stdout
+      debug:
+        var: script_output.stdout
