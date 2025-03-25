@@ -1,0 +1,10 @@
+{
+    "name": "Luke Lee",
+    "vm_name": "Test2",
+    "cpu": 4,
+    "memory": 4,
+    "storage": 64,
+    "os": "Windows",
+    "expiration": "2025-03-26",
+    "reason": "Testing Purposes"
+}
