@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VM Request Form</title>
+</head>
+<body>
+    <h2>Request a Virtual Machine</h2>
+    <form action="/submit" method="post">
+        <label>Requester Name:</label><br>
+        <input type="text" name="name" placeholder="Your full name" required><br><br>
+
+        <label>VM Name:</label><br>
+        <input type="text" name="vm_name" placeholder="Unique VM identifier" required><br><br>
+
+        <label>CPU Cores:</label><br>
+        <input type="number" name="cpu" min="2" max="16" placeholder="e.g., 4" required><br><br>
+
+        <label>RAM (GB):</label><br>
+        <input type="number" name="memory" min="4" max="64" placeholder="e.g., 8" required><br><br>
+
+        <label>Disk Size (GB):</label><br>
+        <input type="number" name="storage" min="64" max="500" placeholder="e.g., 100" required><br><br>
+
+        <label>OS Type:</label><br>
+        <select name="os">
+            <option value="Ubuntu">Ubuntu</option>
+            <option value="Windows">Windows</option>
+        </select><br><br>
+
+        <label>Expiration Date:</label><br>
+        <input type="date" name="expiration" max="2026-03-25"><br><br>
+
+        <label>Reason for Request:</label><br>
+        <textarea name="reason" rows="4" cols="40" placeholder="Briefly describe your use case..." required></textarea><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
