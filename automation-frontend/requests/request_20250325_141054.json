@@ -1,0 +1,10 @@
+{
+    "name": "Luke Lee",
+    "vm_name": "Test1",
+    "cpu": 2,
+    "memory": 6,
+    "storage": 64,
+    "os": "Ubuntu",
+    "expiration": "2025-03-26",
+    "reason": "Testing Purposes"
+}
