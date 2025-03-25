@@ -1,44 +1,47 @@
-import os
-import json
-import yaml
-import subprocess
+---
+- hosts: localhost
+  gather_facts: false
+  vars_files:
+    - /home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml
 
-# Path to the requests directory
-REQUESTS_DIR = os.path.join(os.path.dirname(__file__), 'requests')
+  tasks:
 
-# Find the most recent request file
-request_files = sorted(
-    [f for f in os.listdir(REQUESTS_DIR) if f.endswith('.json')],
-    reverse=True
-)
+  - name: Create VM on ESXi
+    community.vmware.vmware_guest:
+      validate_certs: false
+      hostname: "{{ esxi.hostname }}"
+      username: "{{ esxi.username }}"
+      password: "{{ esxi.password }}"
+      datacenter: "{{ esxi.datacenter }}"
+      folder: "/vm/"
+      name: "{{ vm_name }}"
+      state: poweredoff
+      guest_id: "{{ 'windows9Server64Guest' if os == 'Windows' else 'ubuntu64Guest' }}"
+      disk:
+        - size_gb: "{{ storage }}"
+          type: thin
+          datastore: VMs
+      hardware:
+        memory_mb: "{{ memory | int * 1024 }}"   # Convert GB to MB
+        num_cpus: "{{ cpu }}"
+      networks:
+        - name: VLAN30 - host VMs
+          dns_servers: 10.0.1.50
+          type: dhcp
+      cdrom:
+        - controller_number: 0
+          unit_number: 0
+          state: present 
+          type: iso
+          iso_path: >-
+            {{ '[VMs] Windows Files/windows-server.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-24.04.2-live-server-amd64.iso' }}
+    delegate_to: localhost
 
-if not request_files:
-    print("No request files found.")
-    exit(1)
+  - name: Calculate VM expiration time
+    set_fact:
+      deletion_time: "{{ '%Y-%m-%d %H:%M:%S' | strftime('%s') | int + 86400 }}"
 
-latest_request = request_files[0]
-request_path = os.path.join(REQUESTS_DIR, latest_request)
-
-# Load the JSON data
-with open(request_path, 'r') as f:
-    request_data = json.load(f)
-
-print(f"Loaded latest request: {latest_request}")
-print(json.dumps(request_data, indent=4))
-
-# Convert to vars.yaml format
-vars_yaml_path = os.path.join(os.path.dirname(__file__), 'vars.yaml')
-with open(vars_yaml_path, 'w') as f:
-    yaml.dump(request_data, f)
-
-print(f"Converted data saved to: {vars_yaml_path}")
-
-# Run the Ansible playbook
-try:
-    result = subprocess.run(
-        ['ansible-playbook', 'CreateVM.yaml'],
-        check=True
-    )
-    print("Ansible playbook ran successfully.")
-except subprocess.CalledProcessError as e:
-    print("Error running Ansible playbook:", e)
+  - name: Schedule VM deletion task (example)
+    ansible.builtin.command:
+      cmd: echo "/usr/bin/ansible-playbook delete_vm.yaml" | at now + 1 day
+    delegate_to: localhost
