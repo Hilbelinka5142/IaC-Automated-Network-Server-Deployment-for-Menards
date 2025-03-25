@@ -5,8 +5,8 @@ def test_ssh_connection():
     fortigate = {
         "device_type": "fortinet",
         "host": "10.0.1.1",  # Firewall IP address
-        "username": "admin",  # Your username
-        "password": "your_password",  # Your password
+        "username": "Ansible",  # Your username
+        "password": "password",  # Your password
         "port": 22,  # Default SSH port
     }
 
@@ -26,7 +26,3 @@ def test_ssh_connection():
 
 if __name__ == "__main__":
     test_ssh_connection()
-        vdom: "root"
-        access_token: "{{ fortigate_password }}"
-        system_config:
-          commit: true
