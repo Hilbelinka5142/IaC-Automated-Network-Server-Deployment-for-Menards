@@ -22,7 +22,7 @@
 
     - name: Run Python script with variables from the JSON config
       ansible.builtin.command: >
-        python3 /temp/configure_firewall.py
+        python3 {{ playbook_dir }}/temp/configure_firewall.py
         --host {{ config.fortigate_host }}
         --username {{ config.fortigate_username }}
         --password {{ config.fortigate_password }}
