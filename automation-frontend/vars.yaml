@@ -1,0 +1,8 @@
+cpu: 4
+expiration: '2025-03-26'
+memory: 4
+name: Luke Lee
+os: Windows
+reason: Testing Purposes
+storage: 64
+vm_name: Test2
