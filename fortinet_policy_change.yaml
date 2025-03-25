@@ -16,13 +16,13 @@
 
     - name: Copy Python script to remote device
       ansible.builtin.copy:
-        src: configure_firewall.py
-        dest: /tmp/configure_firewall.py
+        src: "{{ playbook_dir }}/configure_firewall.py"
+        dest: /temp/configure_firewall.py
         mode: '0755'
 
     - name: Run Python script with variables from the JSON config
       ansible.builtin.command: >
-        python3 /tmp/configure_firewall.py
+        python3 /temp/configure_firewall.py
         --host {{ config.fortigate_host }}
         --username {{ config.fortigate_username }}
         --password {{ config.fortigate_password }}
