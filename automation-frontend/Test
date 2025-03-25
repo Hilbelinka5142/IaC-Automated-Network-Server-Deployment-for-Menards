@@ -1,47 +1,44 @@
 import os
 import json
 import yaml
-import glob
-from datetime import datetime
 import subprocess
 
-# Path to your JSON requests folder
-REQUESTS_DIR = '/home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/requests'
-VARS_YAML_PATH = os.path.join(REQUESTS_DIR, 'vars.yaml')
+# Path to the requests directory
+REQUESTS_DIR = os.path.join(os.path.dirname(__file__), 'requests')
 
-# Get all JSON request files sorted by modified time (newest last)
-json_files = sorted(
-    glob.glob(os.path.join(REQUESTS_DIR, 'request_*.json')),
-    key=os.path.getmtime,
+# Find the most recent request file
+request_files = sorted(
+    [f for f in os.listdir(REQUESTS_DIR) if f.endswith('.json')],
     reverse=True
 )
 
-if not json_files:
-    print("❌ No VM request files found.")
+if not request_files:
+    print("No request files found.")
     exit(1)
 
-latest_file = json_files[0]
+latest_request = request_files[0]
+request_path = os.path.join(REQUESTS_DIR, latest_request)
 
-# Load and show the latest request
-with open(latest_file, 'r') as f:
-    data = json.load(f)
+# Load the JSON data
+with open(request_path, 'r') as f:
+    request_data = json.load(f)
 
-print(f"✅ Loaded latest request: {os.path.basename(latest_file)}")
-print(json.dumps(data, indent=4))
+print(f"Loaded latest request: {latest_request}")
+print(json.dumps(request_data, indent=4))
 
-# Save request data as vars.yaml (for Ansible)
-with open(VARS_YAML_PATH, 'w') as f:
-    yaml.dump(data, f)
+# Convert to vars.yaml format
+vars_yaml_path = os.path.join(os.path.dirname(__file__), 'vars.yaml')
+with open(vars_yaml_path, 'w') as f:
+    yaml.dump(request_data, f)
 
-print(f"📁 Saved request variables to: {VARS_YAML_PATH}")
+print(f"Converted data saved to: {vars_yaml_path}")
 
-# Optional: Trigger the Ansible playbook
-ansible_command = [
-    'ansible-playbook',
-    'deploy_vm.yml',
-    '--extra-vars',
-    f"@{VARS_YAML_PATH}"
-]
-
-print("🚀 Running Ansible playbook...")
-subprocess.run(ansible_command)
+# Run the Ansible playbook
+try:
+    result = subprocess.run(
+        ['ansible-playbook', 'CreateVM.yaml'],
+        check=True
+    )
+    print("Ansible playbook ran successfully.")
+except subprocess.CalledProcessError as e:
+    print("Error running Ansible playbook:", e)
