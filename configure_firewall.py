@@ -49,7 +49,9 @@ def configure_fortinet_firewall(config):
                 f"set end {end_date}",
                 "next",
                 "end",
-            ]  
+            ]
+            schedule_output = net_connect.send_config_set(schedule_commands)
+            print("Address Object Output:\n", schedule_output)
 
             # Create Source Address Object
             address_commands = [
