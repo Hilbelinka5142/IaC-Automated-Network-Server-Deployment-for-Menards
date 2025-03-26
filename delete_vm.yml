@@ -9,12 +9,12 @@
 
     - name: Check if VM exists
       community.vmware.vmware_guest_info:
-        hostname: "{{ esxi.hostname }}"
-        username: "{{ esxi.username }}"
-        password: "{{ esxi.password }}"
+        hostname: "{{ 10.0.1.40 }}"
+        username: "{{ root }}"
+        password: "{{ CNIT490sp25 }}"
         validate_certs: false
         name: "{{ vm_name }}"
-        datacenter: "{{ esxi.datacenter }}"
+        datacenter: "{{ ha-datacenter }}"
       register: vm_info
       failed_when: false
       delegate_to: localhost

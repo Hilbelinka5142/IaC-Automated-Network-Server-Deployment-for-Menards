@@ -10,11 +10,11 @@
 
     - name: Create VM based on form input
       community.vmware.vmware_guest:
+        hostname: "{{ 10.0.1.40 }}"
+        username: "{{ root }}"
+        password: "{{ CNIT490sp25 }}"
         validate_certs: false
-        hostname: "{{ esxi.hostname }}"
-        username: "{{ esxi.username }}"
-        password: "{{ esxi.password }}"
-        datacenter: "{{ esxi.datacenter }}"
+        datacenter: "{{ ha-datacenter }}"
         folder: "/vm/"
         name: "{{ vm_name }}"
         state: poweredoff
