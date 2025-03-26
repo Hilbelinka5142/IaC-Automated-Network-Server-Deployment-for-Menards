@@ -35,7 +35,7 @@ print(f"Converted data saved to: {vars_yaml_path}")
 
 # Run the Ansible playbook
 try:
-    playbook_path = '/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/CreateVM.yaml'
+    playbook_path = '/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/CreateVM.yaml'
     subprocess.run(['ansible-playbook', playbook_path], check=True)
 except subprocess.CalledProcessError as e:
     print("Error running Ansible playbook:", e)
