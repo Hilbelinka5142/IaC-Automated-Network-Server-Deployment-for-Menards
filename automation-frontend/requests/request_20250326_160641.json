@@ -1,0 +1,10 @@
+{
+    "requester_name": "Luke",
+    "vm_name": "Test",
+    "cpu": 2,
+    "memory": 4,
+    "storage": 64,
+    "os": "Windows",
+    "expiration": "2025-03-27",
+    "reason": "Testing"
+}
