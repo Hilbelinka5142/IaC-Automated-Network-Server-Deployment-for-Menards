@@ -1,41 +1,47 @@
 ---
 - hosts: esxi
   vars_files:
-  - vars/main.yaml
-#  vars_prompt:
-#    - name: disksize
-#      prompt: How big is the storage?
-#      private: no
+    - /home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml
 
   tasks:
-  - name: create VM
-    community.vmware.vmware_guest:
-     validate_certs: false
-     hostname: "{{ esxi.hostname }}"
-     username: "{{ esxi.username }}"
-     password: "{{ esxi.password }}"
-     datacenter: "{{ esxi.datacenter }}"
-     folder: "/vm/"
-     name: "{{ vmName }}"
-     state: poweredoff
-     guest_id: Ubuntu64Guest
-     disk:
-#     - size_gb: "{{ disksize }}"
-     - size_gb: 5
-       type: thin
-       datastore: VMs
-     hardware:
-       memory_mb: 512
-       num_cpus: 4
-     networks:
-     - name: VLAN30 - host VMs
-       dns_servers: 10.0.1.50
-       type: dhcp
-     cdrom:
-       - controller_number: 0
-         unit_number: 0
-         state: present 
-         type: iso
-         iso_path: "[VMs] Ubuntu Files/ubuntu-24.04.2-live-server-amd64.iso"
-    delegate_to: localhost
-    ignore_errors: true
+    - name: Calculate duration (days) between now and expiration date
+      set_fact:
+        vm_lifetime_days: "{{ ((expiration | to_datetime('%Y-%m-%d')) - (ansible_date_time.date | to_datetime('%Y-%m-%d'))).days }}"
+
+    - name: Create VM based on form input
+      community.vmware.vmware_guest:
+        validate_certs: false
+        hostname: "{{ esxi.hostname }}"
+        username: "{{ esxi.username }}"
+        password: "{{ esxi.password }}"
+        datacenter: "{{ esxi.datacenter }}"
+        folder: "/vm/"
+        name: "{{ vm_name }}"
+        state: poweredoff
+        guest_id: >-
+          {{ 'windows9Server64Guest' if os == 'Windows' else 'Ubuntu64Guest' }}
+        disk:
+          - size_gb: "{{ storage }}"
+            type: thin
+            datastore: VMs
+        hardware:
+          memory_mb: "{{ memory | int * 1024 // 1 }}"
+          num_cpus: "{{ cpu }}"
+        networks:
+          - name: VLAN30 - host VMs
+            dns_servers: 10.0.1.50
+            type: dhcp
+        cdrom:
+          - controller_number: 0
+            unit_number: 0
+            state: present 
+            type: iso
+            iso_path: >-
+              {{ '[VMs] ISOs/SERVER_EVAL_x64FRE_en-us.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-24.04.2-live-server-amd64.iso' }}
+      delegate_to: localhost
+      ignore_errors: true
+
+    - name: Schedule VM deletion using calculated expiration days
+      ansible.builtin.command:
+        cmd: |
+          echo "/usr/bin/ansible-playbook delete_vm.yml" | at now + {{ vm_lifetime_days }} days
