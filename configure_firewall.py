@@ -71,7 +71,7 @@ def configure_fortinet_firewall(config):
                 f"set srcaddr \"SRC-{config['policy_id']}\"",
                 f"set dstaddr \"{config['dst_addr']}\"",
                 "set action accept",
-                "set schedule always",
+                f"set schedule \"{schedule_name}\"",
                 f"set service \"{config['service']}\"",
                 "set logtraffic all",
                 "unset nat",
