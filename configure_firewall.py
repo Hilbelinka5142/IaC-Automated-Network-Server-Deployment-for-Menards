@@ -19,11 +19,6 @@ def load_config():
             print("Error: Failed to parse JSON configuration file.")
             return None
 
-def clear_config_file():
-    """Clear the firewall_config.json file after execution."""
-    with open(CONFIG_FILE, "w") as file:
-        file.write("{}")  # Write an empty JSON object
-
 def configure_fortinet_firewall(config):
     """Connects to the Fortinet firewall and applies configurations."""
     
