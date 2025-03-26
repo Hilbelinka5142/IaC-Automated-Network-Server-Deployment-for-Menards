@@ -85,4 +85,3 @@ if __name__ == "__main__":
     
     if config:
         configure_fortinet_firewall(config)
-        clear_config_file()  # Clear the file after execution
