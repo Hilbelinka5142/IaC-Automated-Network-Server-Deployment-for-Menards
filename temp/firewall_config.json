@@ -2,10 +2,11 @@
     "fortigate_host": "10.0.1.1",
     "fortigate_username": "Ansible",
     "fortigate_password": "password",
-    "policy_id": "4",
+    "policy_id": "3",
     "src_intf": "vlan30",
     "dst_intf": "vlan10",
     "src_addr": "10.0.3.11",
     "dst_addr": "all",
-    "service": "SSH"
+    "service": "SSH",
+    "schedule_end_date": "2025/03/27"
 }
