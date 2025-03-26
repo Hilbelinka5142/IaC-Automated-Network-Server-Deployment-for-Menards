@@ -4,7 +4,6 @@
     - /home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml
 
   tasks:
-<<<<<<< HEAD:CreateVM.yaml
     - name: Calculate duration (days) between now and expiration date
       set_fact:
         vm_lifetime_days: "{{ ((expiration | to_datetime('%Y-%m-%d')) - (ansible_date_time.date | to_datetime('%Y-%m-%d'))).days }}"
@@ -46,50 +45,3 @@
       ansible.builtin.command:
         cmd: |
           echo "/usr/bin/ansible-playbook delete_vm.yml" | at now + {{ vm_lifetime_days }} days
-=======
-  - name: Ask user for VM duration
-    pause:
-      prompt: "How many days do you need this VM?"
-    register: howLong
-
-  - name: create VM
-    community.vmware.vmware_guest:
-     validate_certs: false
-     hostname: "{{ esxi.hostname }}"
-     username: "{{ esxi.username }}"
-     password: "{{ esxi.password }}"
-     datacenter: "{{ esxi.datacenter }}"
-     folder: "/vm/"
-     name: "{{ vmName }}"
-     state: poweredoff
-     guest_id: Ubuntu64Guest
-     disk:
-#     - size_gb: "{{ disksize }}"
-     - size_gb: 5
-       type: thin
-       datastore: VMs
-     hardware:
-       memory_mb: 512
-       num_cpus: 4
-     networks:
-     - name: VLAN30 - host VMs
-       dns_servers: 10.0.1.50
-       type: dhcp
-     cdrom:
-       - controller_number: 0
-         unit_number: 0
-         state: present
-         type: iso
-         iso_path: "[VMs] Ubuntu Files/ubuntu-24.04.2-live-server-amd64.iso"
-    delegate_to: localhost
-    ignore_errors: true
-
-  - name: Calculate deletion time
-    set_fact:
-      deletion_time: "{{ '%Y-%m-%d %H:%M:%S' | strftime('%s') | int + (howLong.howLong | int * 86400) }}"
-
-  - name: Schedule VM deletion
-    ansible.builtin.command:
-      cmd: |
-        echo "/usr/bin/ansible-playbook delete_vm.yml" | at now + {{ howLong.howLong }} days
->>>>>>> cbdb49e0d59327bdbd36238b0c309b8354d887e0:Ansible-Playbooks/CreateVM.yaml
