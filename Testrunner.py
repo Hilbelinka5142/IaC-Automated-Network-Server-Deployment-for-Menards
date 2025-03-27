@@ -1,21 +1,27 @@
 import subprocess
 
-vmName = input("Enter the VM Name: ")
+# Defining the options to playbook maping
+playbooks = {
+	"webserver": ["Ansible-Playbooks/CreateVM.yaml"]
+}
 
-playbook = "Ansible-Playbooks/CreateVM.yaml"
+# Function for running a playbook
+def runPlaybook(playbook):
 
-extra_vars = f"vmName={vmName}"
+	try:
+   	   results = subprocess.run(
+	   ["ansible-playbook", playbook],
+ 	   check=True,
+	   
+ 	   stdout=subprocess.PIPE,
+   	   stderr=subprocess.PIPE
+	   )
+	   print(f"Playbook {playbook} excuted successfully!")
+	   print(result.stdout.decode())
+	
+	except subprocess.CalledProcessError as e:
+	   print(f"Error while executing playbook {playbook}:\n{e.stderr.decode()}")
 
-try:
-   results = subprocess.run(
-	["ansible-playbook", playbook, "--extra-vars", extra_vars],
-	check=True,
-	text=True,
-	capture_output=True
-   )
-   print("Playbook Output:\n", results.stdout)
-except subprocess.CalledProcessError as e:
-   print("Error running playbook:\n", e.stderr)
 
 
 
