@@ -10,23 +10,22 @@
 
     - name: Create VM based on form input
       community.vmware.vmware_guest:
-        hostname: "{{ 10.0.1.40 }}"
-        username: "{{ root }}"
-        password: "{{ CNIT490sp25 }}"
+        hostname: "10.0.1.40"
+        username: "root"
+        password: "CNIT490sp25"
         validate_certs: false
-        datacenter: "{{ ha-datacenter }}"
+        datacenter: "ha-datacenter"
         folder: "/vm/"
         name: "{{ vm_name }}"
         state: poweredoff
-        guest_id: >-
-          {{ 'windows9Server64Guest' if os == 'Windows' else 'Ubuntu64Guest' }}
+        guest_id: "{{ 'windows9Server64Guest' if os == 'Windows' else 'Ubuntu64Guest' }}"
         disk:
-          - size_gb: "{{ storage }}"
+          - size_gb: "{{ storage | default(20) | int }}"
             type: thin
             datastore: VMs
         hardware:
-          memory_mb: "{{ memory | int * 1024 // 1 }}"
-          num_cpus: "{{ cpu }}"
+          memory_mb: "{{ (memory | default(2) | int) * 1024 }}"
+          num_cpus: "{{ cpu | default(1) | int }}"
         networks:
           - name: VLAN30 - host VMs
             dns_servers: 10.0.1.50
