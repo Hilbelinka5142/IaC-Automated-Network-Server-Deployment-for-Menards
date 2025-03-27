@@ -1,8 +1,8 @@
-cpu: 4
-expiration: '2025-03-26'
+cpu: 2
+expiration: '2025-03-27'
 memory: 4
-name: Luke Lee
 os: Windows
-reason: Testing Purposes
+reason: Testing
+requester_name: Luke
 storage: 64
-vm_name: Test2
+vm_name: Test
