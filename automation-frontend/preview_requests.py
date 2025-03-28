@@ -2,13 +2,19 @@ import os
 import json
 import yaml
 import subprocess
+import time
+import platform
 
-# Path to the requests directory
-REQUESTS_DIR = '/home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/requests'
+# Path to the requests/playbook directory
+playbooks = {
+    'webserver': ["~/Ansible-Playbooks/CreateVM.yaml"], # TODO Add file path for firewall playbook for creating SSH, HTTPS, and RDP policies
+    'request': ["~/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/requests"],
+    'inventory': ["~/Ansible-Playbooks/inventory"]
+}
 
 # Find the most recent request file
 request_files = sorted(
-    [f for f in os.listdir(REQUESTS_DIR) if f.endswith('.json')],
+    [f for f in os.listdir(playbooks["request"][0]) if f.endswith('.json')],
     reverse=True
 )
 
@@ -17,7 +23,7 @@ if not request_files:
     exit(1)
 
 latest_request = request_files[0]
-request_path = os.path.join(REQUESTS_DIR, latest_request)
+request_path = os.path.join(playbooks["request"][0], latest_request)
 
 # Load the JSON data
 with open(request_path, 'r') as f:
@@ -33,11 +39,69 @@ with open(vars_yaml_path, 'w') as f:
 
 print(f"Converted data saved to: {vars_yaml_path}")
 
-# Run the Ansible playbook
-try:
-    playbook_path = '/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/CreateVM.yaml'
-    inventory_path = '/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/inventory'
-    subprocess.run(['ansible-playbook', playbook_path, '-i', inventory_path], check=True)
-except subprocess.CalledProcessError as e:
-    print("Error running Ansible playbook:", e)
+# Function for running a playbook
+def runPlaybook(playbook):
 
+	try:
+		results = subprocess.run(
+			["ansible-playbook", playbook, '-i', playbooks['inventory'][0]],
+			check=True,
+			stdout=subprocess.PIPE,
+			stderr=subprocess.PIPE
+	    )
+
+		print(f"Playbook {playbook} excuted successfully!")
+		print(results.stdout.decode())
+	except subprocess.CalledProcessError as e:
+		print(f"Error while executing playbook {playbook}:\n{e.stderr.decode()}")
+		return False
+	return True
+
+# Checks the status of the VM
+def checkServerStatus(ipAddress):
+    # Get's the current operating system
+    system_platform = platform.system()# TODO maybe change if I can just grab data from the front end for what operating system they chose to boot
+
+    if system_platform == "Linux":
+        ping_command = ["ping", "-c", "4", ipAddress]
+    elif system_platform == "Windows":
+        ping_command = ["ping", "-n", "4", ipAddress]
+    else:
+        print(f"Unsupported platform: {system_platform}")
+        return False
+
+    try:
+        result = subprocess.run(
+            ping_command,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        print(f"Server at {ipAddress} is up!")
+        return True
+    except subprocess.CalledProcessError:
+        print(f"Server at {ipAddress} is not reachable.")
+        return False
+
+# Main function that runs playbook function and checks vm status
+def createVM():
+	print("Starting VM creation...")
+	
+	#runs the webserver playbook
+	if not runPlaybook(playbooks["webserver"][0]):
+		return #stops if playbook fails
+	
+	#runs the firewall playbook
+	if not runPlaybook(playbooks["webserver"][1]):
+		return #stops if playbook fails
+	
+	# Get's the Ip of the new VM
+	vmIP = ""
+
+	while not checkServerStatus(vmIP):
+		print("Waiting for VM to come online...")
+		time.sleep(10) #waits 10 seconds before retrying
+
+	print(f"Your VM was successfully created with the IP address of: {vmIP}")
+	
+createVM()
