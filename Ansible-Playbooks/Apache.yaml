@@ -1,0 +1,33 @@
+---
+- name: Installing Apache and deploying custom HTML file
+  hosts: #TODO need to get the IP address of the host that is being deployed.  it can be passed from the python script that is already getting that?
+  become: yes
+  tasks: 
+    - name: Update apt package cache
+      apt:
+        update_cache: yes
+        when: ansible_facts['os_family'] == "Ubuntu"
+
+    - name: install Apache
+      apt:
+        name: apache2
+        state: present
+        when: ansible_facts['os_family'] == "Ubuntu"
+
+    - name: Fetch custom HTML file from remote server
+      fetch:
+        src: /path/to/remote/index.html  # Path on the remote machine
+        dest: /tmp/index.html  # Temp location on the local Ansible control machine
+        flat: yes  # Avoid creating directories
+
+    - name: Copy custom HTML file to Apache web directory
+      copy:
+        src: /tmp/index.html  # Path to the fetched file
+        dest: /var/www/html/index.html  # Destination path on the remote server
+        
+    - name: Ensure that Apache is running
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+        when: ansible_facts['os_family'] == "Ubuntu"
