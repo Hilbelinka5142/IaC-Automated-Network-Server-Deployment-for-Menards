@@ -11,12 +11,16 @@ def remove_disabled_policies(host, user, password):
         "password": password,
         "port": 22,
         "session_log": "/tmp/netmiko_log.txt",
+        "global_delay_factor": 2,
+        "timeout": 60
     }
 
     try:
         with ConnectHandler(**fortigate) as net_connect:
-            net_connect.send_command("config firewall policy")
-            policy_output = net_connect.send_command("show")
+            net_connect.expect_string = r".*#\s*$"
+            detected_prompt = net_connect.find_prompt()
+            print(f"Detected prompt: '{detected_prompt}'")
+            policy_output = net_connect.send_command("show firewall policy")
             disabled_policies = []
 
             for line in policy_output.splitlines():
