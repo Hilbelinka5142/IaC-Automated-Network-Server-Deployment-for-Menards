@@ -17,20 +17,23 @@ def remove_disabled_policies(host, user, password):
 
     try:
         with ConnectHandler(**fortigate) as net_connect:
-            net_connect.expect_string = r".*#\s*$"
             detected_prompt = net_connect.find_prompt()
             print(f"Detected prompt: '{detected_prompt}'")
+            
             policy_output = net_connect.send_command("show firewall policy")
             disabled_policies = []
 
+            policy_id = None
             for line in policy_output.splitlines():
-                if "edit" in line:
+                if "edit" in line:  # Find policy ID
                     policy_id = line.split()[1]
-                if "set status disable" in line:
-                    disabled_policies.append(policy_id)
+                if "set status disable" in line and policy_id:  # Check if policy is disabled
+                    disabled_policies.append(policy_id)  # Add the disabled policy
 
+            # Now delete the disabled policies
             for policy_id in disabled_policies:
                 delete_commands = [
+                    f"config firewall policy",
                     f"delete {policy_id}",
                     "end"
                 ]
