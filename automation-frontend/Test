@@ -1,2 +1,9 @@
 ansible localhost -m community.vmware.vmware_guest_info \
 -a "hostname=10.0.1.40 username=root password=CNIT490sp25 validate_certs=False datacenter=ha-datacenter name=VM11_Test"
+
+
+
+cat << 'EOF' > /tmp/delete_vm_runner.sh
+#!/bin/bash
+/usr/bin/ansible-playbook /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/delete_vm.yml -e vm_name=VM11_Test > /tmp/delete_log.txt 2>&1
+EOF
