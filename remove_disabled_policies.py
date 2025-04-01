@@ -7,8 +7,8 @@ def get_expired_schedules(net_connect):
     schedule_output = net_connect.send_command("show firewall schedule onetime")
     expired_schedules = []
 
-    # Get current date for comparison
-    current_date = datetime.now().strftime("%Y/%m/%d")
+    # Get current date for comparison (as a datetime object)
+    current_date = datetime.now()
 
     # Parse the schedule output
     schedule_name = None
@@ -23,7 +23,8 @@ def get_expired_schedules(net_connect):
             schedule_end_date = None  # Reset end date for the new schedule
 
         if "set end" in line:
-            schedule_end_date = line.split()[2]
+            # Parse the end date from the schedule and convert it into a datetime object
+            schedule_end_date = datetime.strptime(line.split()[2], "%Y/%m/%d")
 
     # Add the last schedule to expired_schedules if applicable
     if schedule_name and schedule_end_date and schedule_end_date < current_date:
