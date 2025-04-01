@@ -1,3 +1,2 @@
-echo "/usr/bin/ansible-playbook /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/delete_vm.yml \
--e @/home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml \
-> /tmp/delete_log.txt 2>&1" | at now + 2 minutes
+ansible localhost -m community.vmware.vmware_guest_info \
+-a "hostname=10.0.1.40 username=root password=CNIT490sp25 validate_certs=False datacenter=ha-datacenter name=VM11_Test"
