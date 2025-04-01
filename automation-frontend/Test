@@ -5,5 +5,7 @@ ansible localhost -m community.vmware.vmware_guest_info \
 
 cat << 'EOF' > /tmp/delete_vm_runner.sh
 #!/bin/bash
-/usr/bin/ansible-playbook /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/delete_vm.yml -e vm_name=VM11_Test > /tmp/delete_log.txt 2>&1
+source /home/deploymentvm/Desktop/newenv/bin/activate
+/usr/bin/ansible-playbook /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/delete_vm.yml -e vm_name=VM11_Test > /tmp/delete_log.txt 2>&1
 EOF
+
