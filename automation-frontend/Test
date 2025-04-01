@@ -1,5 +1,7 @@
 ansible localhost -m community.vmware.vmware_guest_info \
--a "hostname=10.0.1.40 username=root password=CNIT490sp25 validate_certs=False datacenter=ha-datacenter name=VM11_Test"
+  -a "hostname=10.0.1.40 username=root password=CNIT490sp25 validate_certs=False datacenter=ha-datacenter" \
+  -c local
+
 
 
 
