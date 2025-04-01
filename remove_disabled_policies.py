@@ -23,8 +23,11 @@ def get_expired_schedules(net_connect):
             schedule_end_date = None  # Reset end date for the new schedule
 
         if "set end" in line:
-            # Parse the end date from the schedule and convert it into a datetime object
-            schedule_end_date = datetime.strptime(line.split()[2], "%Y/%m/%d")
+            # The line will be like 'set end 00:00 2025/04/01'
+            end_date_str = line.split()[-1]  # This grabs '2025/04/01'
+
+            # Convert the date string to a datetime object
+            schedule_end_date = datetime.strptime(end_date_str, "%Y/%m/%d")
 
     # Add the last schedule to expired_schedules if applicable
     if schedule_name and schedule_end_date and schedule_end_date < current_date:
