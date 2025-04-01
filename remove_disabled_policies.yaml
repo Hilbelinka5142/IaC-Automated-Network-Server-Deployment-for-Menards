@@ -5,14 +5,15 @@
   gather_facts: no
 
   vars:
-    firewall_host: "{{ hostvars['firewall']['ansible_host'] }}"
-    firewall_user: "{{ hostvars['firewall']['ansible_user'] }}"
-    firewall_password: "{{ hostvars['firewall']['ansible_password'] }}"
+    firewall_host: "{{ hostvars['NSAT-Firewall']['ansible_host'] }}"
+    firewall_user: "{{ hostvars['NSAT-Firewall']['ansible_user'] }}"
+    firewall_password: "{{ hostvars['NSAT-Firewall']['ansible_password'] }}"
+    ansible_python_interpreter: "/home/deploymentvm/Desktop/newenv/bin/python" 
 
   tasks:
     - name: Copy Python script to remote machine
       ansible.builtin.copy:
-        src: remove_disabled_policies.py
+        src: "{{ playbook_dir }}/remove_disabled_policies.py"
         dest: "{{ playbook_dir }}/remove_disabled_policies.py"
         mode: '0755'
 
