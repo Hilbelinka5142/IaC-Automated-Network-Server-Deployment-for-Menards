@@ -2,3 +2,87 @@ ansible localhost -m community.vmware.vmware_guest_info -a \
 "hostname=10.0.1.40 username=root password=CNIT490sp25 validate_certs=False datacenter=ha-datacenter" \
 -e "vm_name=VM11\ Test"
 
+
+localhost | SUCCESS => {
+    "changed": false,
+    "instance": {
+        "advanced_settings": {
+            "hpet0.present": "TRUE",
+            "migrate.hostLog": "",
+            "migrate.hostLogState": "none",
+            "migrate.migrationId": "0",
+            "nvram": "VM11 Test.nvram",
+            "pciBridge0.present": "TRUE",
+            "pciBridge4.functions": "8",
+            "pciBridge4.present": "TRUE",
+            "pciBridge4.virtualDev": "pcieRootPort",
+            "pciBridge5.functions": "8",
+            "pciBridge5.present": "TRUE",
+            "pciBridge5.virtualDev": "pcieRootPort",
+            "pciBridge6.functions": "8",
+            "pciBridge6.present": "TRUE",
+            "pciBridge6.virtualDev": "pcieRootPort",
+            "pciBridge7.functions": "8",
+            "pciBridge7.present": "TRUE",
+            "pciBridge7.virtualDev": "pcieRootPort",
+            "svga.present": "TRUE",
+            "vmware.tools.internalversion": "0",
+            "vmware.tools.requiredversion": "12325"
+        },
+        "annotation": "",
+        "current_snapshot": null,
+        "customvalues": {},
+        "guest_consolidation_needed": false,
+        "guest_question": null,
+        "guest_tools_status": "guestToolsNotRunning",
+        "guest_tools_version": "0",
+        "hw_cluster": null,
+        "hw_cores_per_socket": 1,
+        "hw_datastores": [
+            "VMs"
+        ],
+        "hw_esxi_host": "localhost.localdomain",
+        "hw_eth0": {
+            "addresstype": "generated",
+            "ipaddresses": null,
+            "label": "Network adapter 1",
+            "macaddress": null,
+            "macaddress_dash": null,
+            "portgroup_key": null,
+            "portgroup_portkey": null,
+            "summary": "VLAN30 - host VMs"
+        },
+        "hw_files": [
+            "[VMs] VM11 Test/VM11 Test.vmx",
+            "[VMs] VM11 Test/VM11 Test.vmsd",
+            "[VMs] VM11 Test/VM11 Test.vmdk"
+        ],
+        "hw_folder": "/ha-datacenter/vm",
+        "hw_guest_full_name": null,
+        "hw_guest_ha_state": null,
+        "hw_guest_id": null,
+        "hw_interfaces": [
+            "eth0"
+        ],
+        "hw_is_template": false,
+        "hw_memtotal_mb": 4096,
+        "hw_name": "VM11 Test",
+        "hw_power_status": "poweredOff",
+        "hw_processor_count": 3,
+        "hw_product_uuid": "564dbff5-9044-bbf8-bfa9-3a40f640e386",
+        "hw_version": "vmx-19",
+        "instance_uuid": "52ce84a2-a3fb-2593-0719-f4137513220b",
+        "ipv4": null,
+        "ipv6": null,
+        "module_hw": true,
+        "moid": "27",
+        "snapshots": [],
+        "tpm_info": {
+            "provider_id": null,
+            "tpm_present": false
+        },
+        "vimref": "vim.VirtualMachine:27",
+        "vnc": {}
+    }
+}
+
