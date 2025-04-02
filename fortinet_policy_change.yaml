@@ -18,12 +18,6 @@
       ansible.builtin.set_fact:
         config: "{{ firewall_config['content'] | b64decode | from_json }}"
 
-    - name: Copy Python script to remote device
-      ansible.builtin.copy:
-        src: "{{ playbook_dir }}/configure_firewall.py"
-        dest: "{{ playbook_dir }}/tmp/configure_firewall.py"
-        mode: '0755'
-
     - name: Run Python script with host, user, and password arguments
       ansible.builtin.command: >
         python3 {{ playbook_dir }}/tmp/configure_firewall.py
