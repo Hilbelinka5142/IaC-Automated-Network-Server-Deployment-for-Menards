@@ -3,8 +3,12 @@
   hosts: localhost
   connection: local
   gather_facts: no
+
   vars:
-    ansible_python_interpreter: "/home/deploymentvm/Desktop/newenv/bin/python" 
+  ansible_python_interpreter: "/home/deploymentvm/Desktop/newenv/bin/python" 
+  firewall_host: "{{ hostvars['firewall']['ansible_host'] }}"
+  firewall_user: "{{ hostvars['firewall']['ansible_user'] }}"
+  firewall_password: "{{ hostvars['firewall']['ansible_password'] }}"
 
   tasks:
     - name: Read firewall configuration from JSON file
@@ -19,23 +23,28 @@
     - name: Copy Python script to remote device
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/configure_firewall.py"
-        dest: "{{ playbook_dir }}//tmp/configure_firewall.py"
+        dest: "{{ playbook_dir }}/tmp/firewall_config.json"
         mode: '0755'
 
     - name: Run Python script with variables from the JSON config
       ansible.builtin.command: >
         python3 {{ playbook_dir }}/tmp/configure_firewall.py
-        --host {{ config.fortigate_host }}
-        --username {{ config.fortigate_username }}
-        --password {{ config.fortigate_password }}
+        --host {{ firewall_host }}
+        --user {{ firewall_user }}
+        --password {{ firewall_password }}
         --policy_id {{ config.policy_id }}
         --src_intf {{ config.src_intf }}
         --dst_intf {{ config.dst_intf }}
         --src_addr {{ config.src_addr }}
         --dst_addr {{ config.dst_addr }}
         --service {{ config.service }}
+        --expiration {{config.schedule}}
+        --host {{ firewall_host }}
+        --user {{ firewall_user }}
+        --password {{ firewall_password }}
       register: script_output
 
     - name: Show Python script output
       debug:
         var: script_output.stdout
+
