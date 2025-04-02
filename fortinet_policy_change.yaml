@@ -20,7 +20,7 @@
 
     - name: Run Python script with host, user, and password arguments
       ansible.builtin.command: >
-        python3 {{ playbook_dir }}/tmp/configure_firewall.py
+        python3 {{ playbook_dir }}/configure_firewall.py
         --host {{ firewall_host }}
         --user {{ firewall_user }}
         --password {{ firewall_password }}
