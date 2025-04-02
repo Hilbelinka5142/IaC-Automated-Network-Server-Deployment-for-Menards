@@ -39,9 +39,6 @@
         --dst_addr {{ config.dst_addr }}
         --service {{ config.service }}
         --expiration {{config.schedule}}
-        --host {{ firewall_host }}
-        --user {{ firewall_user }}
-        --password {{ firewall_password }}
       register: script_output
 
     - name: Show Python script output
