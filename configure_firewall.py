@@ -1,5 +1,6 @@
 import json
 import os
+import argparse
 from datetime import datetime
 from netmiko import ConnectHandler
 
@@ -20,20 +21,20 @@ def load_config():
             print("Error: Failed to parse JSON configuration file.")
             return None
 
-def configure_fortinet_firewall(config):
+def configure_fortinet_firewall(config, host, user, password):
     """Connects to the Fortinet firewall and applies configurations."""
     
     # Get the current date for the start time (today's date) and set time to 00:00:00 (midnight)
     start_date = datetime.now().strftime("00:00:00 %Y/%m/%d")
-    end_date = f"00:00:00 {config['schedule_end_date']}"
+    end_date = f"00:00:00 {config['expiration']}"
     schedule_name = f"Policy-{config['policy_id']}"
 
     # Firewall connection details
     fortigate = {
         "device_type": "fortinet",
-        "host": config["fortigate_host"],
-        "username": config["fortigate_username"],
-        "password": config["fortigate_password"],
+        "host": host,
+        "username": user,
+        "password": password,
         "port": 22,
         "session_log": "/tmp/netmiko_log.txt",
     }
@@ -49,10 +50,10 @@ def configure_fortinet_firewall(config):
                 f"set end {end_date}",
                 "next",
                 "end",
-            ]
+            ]  
             schedule_output = net_connect.send_config_set(schedule_commands)
             print("Address Object Output:\n", schedule_output)
-
+            
             # Create Source Address Object
             address_commands = [
                 "config firewall address",
@@ -93,4 +94,10 @@ if __name__ == "__main__":
     config = load_config()
     
     if config:
-        configure_fortinet_firewall(config)
+        parser = argparse.ArgumentParser(description="Remove disabled policies and associated source address objects from Fortinet firewall")
+        parser.add_argument("--host", required=True, help="Firewall host IP")
+        parser.add_argument("--user", required=True, help="Firewall username")
+        parser.add_argument("--password", required=True, help="Firewall password")
+        args = parser.parse_args()
+
+        configure_fortinet_firewall(config, args.host, args.user, args.password)
