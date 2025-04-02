@@ -43,6 +43,7 @@ def configure_fortinet_firewall(config, host, user, password):
         # Establish SSH connection using Netmiko
         with ConnectHandler(**fortigate) as net_connect:
             
+            # Schedule commands
             schedule_commands = [
                 "config firewall schedule onetime",
                 f"edit {schedule_name}",
@@ -90,14 +91,17 @@ def configure_fortinet_firewall(config, host, user, password):
         print(f"Error: {str(e)}")
 
 if __name__ == "__main__":
+    # Argument parsing for host, user, and password only
+    parser = argparse.ArgumentParser(description="Configure Fortinet Firewall using SSH")
+    parser.add_argument("--host", required=True, help="Firewall host IP")
+    parser.add_argument("--user", required=True, help="Firewall username")
+    parser.add_argument("--password", required=True, help="Firewall password")
+    args = parser.parse_args()
+
     # Load config from JSON file
     config = load_config()
-    
-    if config:
-        parser = argparse.ArgumentParser(description="Remove disabled policies and associated source address objects from Fortinet firewall")
-        parser.add_argument("--host", required=True, help="Firewall host IP")
-        parser.add_argument("--user", required=True, help="Firewall username")
-        parser.add_argument("--password", required=True, help="Firewall password")
-        args = parser.parse_args()
 
+    # Check if JSON config was loaded successfully
+    if config:
+        # Configure the firewall using the parsed arguments and JSON configuration
         configure_fortinet_firewall(config, args.host, args.user, args.password)
