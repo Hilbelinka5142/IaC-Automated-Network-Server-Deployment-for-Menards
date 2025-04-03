@@ -20,3 +20,9 @@ ansible_connection=winrm
 ansible_become_method=runas
 ansible_python_interpreter=/bin/python
 # make sure to have pywinrm API
+
+[test]
+10.0.3.11
+[test:vars]
+ansible_user=test
+ansible_python_interpreter=/usr/bin/python3
