@@ -20,7 +20,8 @@ def form():
 def submit():
     # Extract form data from the request
     try:
-        requester_name = request.form.get('requester_name')
+        requester_first_name = request.form.get('requester_first_name')
+        requester_last_name = request.form.get('requester_last_name')
         vm_name = request.form.get('vm_name')
         cpu = int(request.form.get('cpu'))
         memory = int(request.form.get('memory'))
@@ -30,7 +31,7 @@ def submit():
         reason = request.form.get('reason')
 
         # Basic validation rules
-        if not all([requester_name, vm_name, cpu, memory, storage, os_type, expiration, reason]):
+        if not all([requester_first_name, requester_first_name, vm_name, cpu, memory, storage, os_type, expiration, reason]):
             return "All fields are required.", 400
 
         if not (2 <= cpu <= 16):
@@ -43,7 +44,8 @@ def submit():
             return "Storage must be between 64 and 500 GB.", 400
 
         data = {
-            'requester_name': requester_name,
+            'requester_first_name': requester_first_name,
+            'requester_last_name': requester_last_name,
             'vm_name': vm_name,
             'cpu': cpu,
             'memory': memory,

@@ -1,8 +1,9 @@
 cpu: 2
-expiration: '2025-03-27'
+expiration: '2025-04-04'
 memory: 4
-os: Windows
-reason: Testing
-requester_name: Luke
+os: Ubuntu
+reason: Testing customization
+requester_first_name: 'Alex '
+requester_last_name: Hilbelink
 storage: 64
-vm_name: Test
+vm_name: newtest

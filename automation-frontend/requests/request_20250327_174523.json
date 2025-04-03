@@ -1,0 +1,10 @@
+{
+    "requester_name": "Ally Andersen",
+    "vm_name": "VM11_Test",
+    "cpu": 3,
+    "memory": 4,
+    "storage": 64,
+    "os": "Ubuntu",
+    "expiration": "2025-04-1",
+    "reason": "Testing HTML"
+}

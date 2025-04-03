@@ -1,0 +1,11 @@
+{
+    "requester_first_name": "Tanner",
+    "requester_last_name": "Sands",
+    "vm_name": "Testing",
+    "cpu": 4,
+    "memory": 6,
+    "storage": 64,
+    "os": "Ubuntu",
+    "expiration": "2025-04-27",
+    "reason": "Testing thiiiss issh"
+}
