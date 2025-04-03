@@ -2,6 +2,7 @@
 - hosts: esxi
   vars_files:
     - /home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml
+  become: yes
 
   tasks:
     - name: Calculate duration (days) between now and expiration date
