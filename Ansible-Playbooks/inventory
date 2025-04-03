@@ -13,7 +13,10 @@ ansible_python_interpreter=/bin/python
 [winServer]
 10.0.1.50
 [winServer:vars]
-win_user=admin
-win_pass=CNIT490sp25
+ansible_user=Administrator
+ansible_password=CNIT490sp25
+ansible_shell_type=cmd
+ansible_connection=winrm
+ansible_become_method=runas
 ansible_python_interpreter=/bin/python
 # make sure to have pywinrm API
