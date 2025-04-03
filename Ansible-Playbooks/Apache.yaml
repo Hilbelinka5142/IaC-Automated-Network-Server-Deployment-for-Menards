@@ -10,12 +10,6 @@
     - name: install Apache
       command: apt install apache2 -y
 
-    #- name: Fetch custom HTML file from remote server
-    #  fetch:
-    #    src: home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks  # Path on the remote machine
-    #    dest: /tmp/index.html  # Temp location on the local Ansible control machine
-    #    flat: yes  # Avoid creating directories
-
     - name: Copy custom HTML file to Apache web directory
       copy:
         src: /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/index.html  # Path to the fetched file
