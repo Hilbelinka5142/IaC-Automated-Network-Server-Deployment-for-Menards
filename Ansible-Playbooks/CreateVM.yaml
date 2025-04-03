@@ -39,14 +39,16 @@
             dns_servers: 10.0.1.50
             type: dhcp
         wait_for_ip_address: true
-        customize:
+        customization:
           linux:
             user: "test"
             password: "test"
             ssh_authorized_keys:
-              - "~/.ssh/ansible.pub"
+              - "{{ lookup('file', '~/.ssh/ansible.pub') }}"
             hostname: "testing VM"
-            timezone: "UTC"
+            timezone: "America/Chicago"
+            dns_servers:
+              - "10.0.1.50"
       delegate_to: localhost
       ignore_errors: true
 
