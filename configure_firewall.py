@@ -21,15 +21,26 @@ def load_config():
             print("Error: Failed to parse JSON configuration file.")
             return None
 
-def configure_fortinet_firewall(config, host, user, password):
-    """Connects to the Fortinet firewall and applies configurations."""
+def get_next_policy_id(net_connect):
+    """Retrieve the next available policy ID on the firewall."""
+    output = net_connect.send_command("show firewall policy")
     
-    # Get the current date for the start time (today's date) and set time to 00:00:00 (midnight)
-    start_date = datetime.now().strftime("00:00:00 %Y/%m/%d")
-    end_date = f"00:00:00 {config['expiration']}"
-    schedule_name = f"Policy-{config['policy_id']}"
+    policy_ids = []
+    for line in output.splitlines():
+        if "edit" in line:  # Policies start with "edit <policy_id>"
+            try:
+                policy_id = int(line.split()[1])  # Extract the policy number
+                policy_ids.append(policy_id)
+            except (IndexError, ValueError):
+                continue  # Ignore invalid lines
 
-    # Firewall connection details
+    next_policy_id = max(policy_ids) + 1 if policy_ids else 1  # Start at 1 if no policies exist
+    return next_policy_id
+
+def configure_fortinet_firewall(config, host, user, password):
+    """Connects to the Fortinet firewall and applies configurations dynamically."""
+    
+    # Establish SSH connection using Netmiko
     fortigate = {
         "device_type": "fortinet",
         "host": host,
@@ -40,9 +51,16 @@ def configure_fortinet_firewall(config, host, user, password):
     }
 
     try:
-        # Establish SSH connection using Netmiko
         with ConnectHandler(**fortigate) as net_connect:
-            
+            # Get next available policy ID
+            policy_id = get_next_policy_id(net_connect)
+            print(f"Next available policy ID: {policy_id}")
+
+            # Generate schedule name dynamically
+            schedule_name = f"Policy-{policy_id}"
+            start_date = datetime.now().strftime("00:00:00 %Y/%m/%d")
+            end_date = f"00:00:00 {config['expiration']}"
+
             # Schedule commands
             schedule_commands = [
                 "config firewall schedule onetime",
@@ -52,28 +70,26 @@ def configure_fortinet_firewall(config, host, user, password):
                 "next",
                 "end",
             ]  
-            schedule_output = net_connect.send_config_set(schedule_commands)
-            print("Address Object Output:\n", schedule_output)
+            net_connect.send_config_set(schedule_commands)
             
             # Create Source Address Object
             address_commands = [
                 "config firewall address",
-                f"edit SRC-{config['policy_id']}",
+                f"edit SRC-{policy_id}",
                 f"set subnet {config['src_addr']} 255.255.255.255",
                 "next",
                 "end",
             ]
-            output1 = net_connect.send_config_set(address_commands)
-            print("Address Object Output:\n", output1)
+            net_connect.send_config_set(address_commands)
 
-            # Create Firewall Policy
+            # Create Firewall Policy dynamically
             policy_commands = [
                 "config firewall policy",
-                f"edit {config['policy_id']}",
-                f"set srcintf \"{config['src_intf']}\"",
-                f"set dstintf \"{config['dst_intf']}\"",
-                f"set srcaddr \"SRC-{config['policy_id']}\"",
-                f"set dstaddr \"{config['dst_addr']}\"",
+                f"edit {policy_id}",
+                f"set srcintf vlan30",
+                f"set dstintf vlan10",
+                f"set srcaddr \"SRC-{policy_id}\"",
+                f"set dstaddr all",
                 "set action accept",
                 f"set schedule \"{schedule_name}\"",
                 f"set service \"{config['service']}\"",
@@ -82,8 +98,7 @@ def configure_fortinet_firewall(config, host, user, password):
                 "next",
                 "end",
             ]
-            output2 = net_connect.send_config_set(policy_commands)
-            print("Policy Output:\n", output2)
+            net_connect.send_config_set(policy_commands)
 
         print("Firewall configuration completed successfully!")
 
