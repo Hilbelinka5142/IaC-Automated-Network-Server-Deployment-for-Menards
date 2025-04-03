@@ -18,7 +18,7 @@
         datacenter: "ha-datacenter"
         folder: "/vm/"
         name: "{{ vm_name }}"
-        state: poweredoff
+        state: poweredon
         guest_id: "{{ 'windows9Server64Guest' if os == 'Windows' else 'Ubuntu64Guest' }}"
         disk:
           - size_gb: "{{ storage | default(20) | int }}"
@@ -27,23 +27,28 @@
         hardware:
           memory_mb: "{{ (memory | default(2) | int) * 1024 }}"
           num_cpus: "{{ cpu | default(1) | int }}"
+        cdrom:
+          - controller_number: 0
+            unit_number: 0
+            state: present
+            type: iso
+            iso_path: >-
+              {{ '[VMs] ISOs/SERVER_EVAL_x64FRE_en-us.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-24.04.2-live-server-amd64.iso' }}
         networks:
           - name: VLAN30 - host VMs
             dns_servers: 10.0.1.50
             type: dhcp
-        cdrom:
-          - controller_number: 0
-            unit_number: 0
-            state: present 
-            type: iso
-            iso_path: >-
-              {{ '[VMs] ISOs/SERVER_EVAL_x64FRE_en-us.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-24.04.2-live-server-amd64.iso' }}
         wait_for_ip_address: true
-        customization:
-          passowrd: test
-          username: test
+        customize:
+          linux:
+            user: "test"
+            password: "test"
+            ssh_authorized_keys:
+              - "~/.ssh/ansible.pub"
+            hostname: "testing VM"
+            timezone: "UTC"
       delegate_to: localhost
-      ignore_errors: true 
+      ignore_errors: true
 
 # TESTING
     - name: Schedule VM deletion in 2 minutes (for testing)

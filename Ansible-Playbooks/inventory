@@ -22,7 +22,7 @@ ansible_python_interpreter=/bin/python
 # make sure to have pywinrm API
 
 [test]
-10.0.3.11
+10.0.3.12
 [test:vars]
 ansible_user=test
 ansible_python_interpreter=/usr/bin/python3
