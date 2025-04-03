@@ -3,9 +3,18 @@
   hosts: localhost
   gather_facts: no
   vars_files:
-    - automation-frontend/vars.yaml
+    - /home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml
+    
 
   tasks:
+  
+    - name: DEBUG - Show vm_name
+      debug:
+        var: vm_name
+  
+    - name: Show if vm_name is defined
+      debug:
+        msg: "vm_name is set to {{ vm_name | default('undefined') }}"
 
     - name: Check if VM exists
       community.vmware.vmware_guest_info:
@@ -18,11 +27,15 @@
       register: vm_info
       failed_when: false
       delegate_to: localhost
+      
+    - name: Dump vm_info output
+      debug:
+        var: vm_info
 
     - name: Fail if VM was not found
       ansible.builtin.fail:
         msg: "VM '{{ vm_name }}' not found. Cannot delete."
-      when: vm_info.failed or vm_info.virtual_machines is not defined
+      when: vm_info is not defined or vm_info.failed is defined and vm_info.failed or vm_info.instance is not defined or vm_info.instance.hw_name != vm_name
 
     - name: Power off VM if it is running
       community.vmware.vmware_guest_powerstate:
@@ -33,7 +46,7 @@
         name: "{{ vm_name }}"
         state: poweredoff
         datacenter: "ha-datacenter"
-      when: vm_info.virtual_machines[0].power_state == "poweredOn"
+      when: vm_info.instance.hw_power_status == "poweredOn"
       delegate_to: localhost
 
     - name: Delete the VM
