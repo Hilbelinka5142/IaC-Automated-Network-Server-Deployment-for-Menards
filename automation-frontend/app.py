@@ -31,7 +31,7 @@ def submit():
         reason = request.form.get('reason')
 
         # Basic validation rules
-        if not all([requester_first_name, requester_first_name, vm_name, cpu, memory, storage, os_type, expiration, reason]):
+        if not all([requester_first_name, requester_last_name, vm_name, cpu, memory, storage, os_type, expiration, reason]):
             return "All fields are required.", 400
 
         if not (2 <= cpu <= 16):
