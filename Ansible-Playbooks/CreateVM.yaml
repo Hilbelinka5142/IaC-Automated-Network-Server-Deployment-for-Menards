@@ -40,15 +40,11 @@
             type: dhcp
         wait_for_ip_address: true
         customization:
-          linux:
-            user: "test"
-            password: "test"
-            ssh_authorized_keys:
-              - "{{ lookup('file', '~/.ssh/ansible.pub') }}"
             hostname: "testing VM"
             timezone: "America/Chicago"
             dns_servers:
               - "10.0.1.50"
+            password: "test"
       delegate_to: localhost
       ignore_errors: true
 
@@ -67,4 +63,3 @@
    #   ansible.builtin.command:
      #   cmd: |
         #  echo "/usr/bin/ansible-playbook delete_vm.yml" | at 5:00 {{ vm_lifetime_days }}
-
