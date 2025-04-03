@@ -1,0 +1,10 @@
+{
+    "requester_name": "Alex Hilbelink",
+    "vm_name": "TestVm",
+    "cpu": 3,
+    "memory": 5,
+    "storage": 64,
+    "os": "Ubuntu",
+    "expiration": "2025-04-04",
+    "reason": "Testing apache playbook"
+}

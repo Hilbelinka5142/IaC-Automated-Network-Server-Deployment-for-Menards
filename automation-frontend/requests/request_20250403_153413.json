@@ -1,0 +1,11 @@
+{
+    "requester_first_name": "Alex ",
+    "requester_last_name": "Hilbelink",
+    "vm_name": "newtest",
+    "cpu": 2,
+    "memory": 4,
+    "storage": 64,
+    "os": "Ubuntu",
+    "expiration": "2025-04-04",
+    "reason": "Testing customization"
+}

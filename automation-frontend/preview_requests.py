@@ -39,8 +39,18 @@ with open(vars_yaml_path, 'w') as f:
 
 print(f"Converted data saved to: {vars_yaml_path}")
 
+<<<<<<< HEAD
 # Function for running a playbook
 def runPlaybook(playbook):
+=======
+# Run the Create_VM Ansible playbook
+try:
+    playbook_path = '/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/CreateVM.yaml'
+    inventory_path = '/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/inventory'
+    subprocess.run(['ansible-playbook', playbook_path, '-i', inventory_path], check=True)
+except subprocess.CalledProcessError as e:
+    print("Error running Ansible playbook:", e)
+>>>>>>> 94da0e2 (Changed preview_requests.py)
 
 	try:
 		results = subprocess.run(
