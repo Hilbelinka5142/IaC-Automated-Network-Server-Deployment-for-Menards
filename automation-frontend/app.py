@@ -1,5 +1,6 @@
 import os
 import json
+import subprocess
 from flask import Flask, render_template, request
 from datetime import datetime
 
@@ -67,6 +68,9 @@ def submit():
         # Log the submission for confirmation/debugging
         print(f"Form submitted: {data}")
         print(f"Saved request to: {filepath}")
+        
+        #Automatically run preview_requests.py after submission
+        subprocess.run(['python', 'preview_requests.py'])
 
         # Return a basic success message to the user
         return "Request submitted and saved successfully!"
