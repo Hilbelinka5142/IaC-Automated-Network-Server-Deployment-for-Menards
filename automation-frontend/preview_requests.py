@@ -6,10 +6,12 @@ import time
 import platform
 
 # Path to the requests/playbook directory
+base_dir = os.path.dirname(__file__)
+ansible_dir = os.path.expanduser("~/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks")
 playbooks = {
-    'webserver': ["~/Ansible-Playbooks/CreateVM.yaml"], # TODO Add file path for firewall playbook for creating SSH, HTTPS, and RDP policies
-    'request': ["~/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/requests"],
-    'inventory': ["~/Ansible-Playbooks/inventory"]
+    'webserver': [os.path.join(ansible_dir, 'CreateVM.yaml')], # TODO Add file path for firewall playbook for creating SSH, HTTPS, and RDP policies
+    'request': [os.path.join(base_dir, 'requests')],
+    'inventory': [os.path.join(ansible_dir, 'inventory')]
 }
 
 # Find the most recent request file
@@ -39,19 +41,8 @@ with open(vars_yaml_path, 'w') as f:
 
 print(f"Converted data saved to: {vars_yaml_path}")
 
-<<<<<<< HEAD
 # Function for running a playbook
 def runPlaybook(playbook):
-=======
-# Run the Create_VM Ansible playbook
-try:
-    playbook_path = '/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/CreateVM.yaml'
-    inventory_path = '/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/inventory'
-    subprocess.run(['ansible-playbook', playbook_path, '-i', inventory_path], check=True)
-except subprocess.CalledProcessError as e:
-    print("Error running Ansible playbook:", e)
->>>>>>> 94da0e2 (Changed preview_requests.py)
-
 	try:
 		results = subprocess.run(
 			["ansible-playbook", playbook, '-i', playbooks['inventory'][0]],
@@ -59,11 +50,14 @@ except subprocess.CalledProcessError as e:
 			stdout=subprocess.PIPE,
 			stderr=subprocess.PIPE
 	    )
-
-		print(f"Playbook {playbook} excuted successfully!")
+		print(f"Playbook {playbook} executed successfully!")
 		print(results.stdout.decode())
 	except subprocess.CalledProcessError as e:
-		print(f"Error while executing playbook {playbook}:\n{e.stderr.decode()}")
+		print(f"Error while executing playbook {playbook}:")
+		print("STDOUT:")
+		print(e.stdout.decode())
+		print("STDERR:")
+		print(e.stdout.decode())
 		return False
 	return True
 
@@ -102,8 +96,8 @@ def createVM():
 		return #stops if playbook fails
 	
 	#runs the firewall playbook
-	if not runPlaybook(playbooks["webserver"][1]):
-		return #stops if playbook fails
+	#if not runPlaybook(playbooks["webserver"][1]):
+		#return #stops if playbook fails
 	
 	# Get's the Ip of the new VM
 	vmIP = ""
