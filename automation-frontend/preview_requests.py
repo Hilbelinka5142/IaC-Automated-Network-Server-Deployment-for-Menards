@@ -8,8 +8,9 @@ import platform
 # Path to the requests/playbook directory
 base_dir = os.path.dirname(__file__)
 ansible_dir = os.path.expanduser("~/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks")
+firewall_dir = os.path.expanduser("/home/deploymentvm/Desktop/Ansible/Firewall")
 playbooks = {
-    'webserver': [os.path.join(ansible_dir, 'CreateVM.yaml')], # TODO Add file path for firewall playbook for creating SSH, HTTPS, and RDP policies
+    'webserver': [os.path.join(ansible_dir, 'CreateVM.yaml'), os.path.join(firewall_dir, 'fortinet_policy_change.yaml')],
     'request': [os.path.join(base_dir, 'requests')],
     'inventory': [os.path.join(ansible_dir, 'inventory')]
 }
@@ -92,13 +93,13 @@ def createVM():
 	print("Starting VM creation...")
 	
 	#runs the webserver playbook
-	if not runPlaybook(playbooks["webserver"][0]):
-		return #stops if playbook fails
+	#if not runPlaybook(playbooks["webserver"][0]):
+	#	return #stops if playbook fails
 	
 	#runs the firewall playbook
-	#if not runPlaybook(playbooks["webserver"][1]):
-		#return #stops if playbook fails
-	
+	if not runPlaybook(playbooks["webserver"][1]):
+		return #stops if playbook fails
+
 	# Get's the Ip of the new VM
 	vmIP = ""
 
