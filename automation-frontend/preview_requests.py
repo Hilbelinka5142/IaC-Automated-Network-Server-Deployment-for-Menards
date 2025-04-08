@@ -97,8 +97,8 @@ def createVM():
 	print("Starting VM creation...")
 	
 	#runs the webserver playbook
-	#if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
-	#	return #stops if playbook fails
+	if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
+		return #stops if playbook fails
 	
 	#runs the firewall playbook
 	if not runPlaybook(playbooks["firewall"][0], playbooks["inventory"]["firewall"]):
