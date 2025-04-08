@@ -10,9 +10,13 @@ base_dir = os.path.dirname(__file__)
 ansible_dir = os.path.expanduser("~/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks")
 firewall_dir = os.path.expanduser("/home/deploymentvm/Desktop/Ansible/Firewall")
 playbooks = {
-    'webserver': [os.path.join(ansible_dir, 'CreateVM.yaml'), os.path.join(firewall_dir, 'fortinet_policy_change.yaml')],
+    'webserver': [os.path.join(ansible_dir, 'CreateVM.yaml')],
     'request': [os.path.join(base_dir, 'requests')],
-    'inventory': [os.path.join(ansible_dir, 'inventory')]
+    'firewall': [os.path.join(firewall_dir, 'fortinet_policy_change.yaml')],
+    'inventory': {
+	'webserver': os.path.join(ansible_dir, 'inventory'),
+	'firewall': os.path.join(firewall_dir, 'inventory.ini')
+    }
 }
 
 # Find the most recent request file
@@ -43,10 +47,10 @@ with open(vars_yaml_path, 'w') as f:
 print(f"Converted data saved to: {vars_yaml_path}")
 
 # Function for running a playbook
-def runPlaybook(playbook):
+def runPlaybook(playbook, inventoryPath):
 	try:
 		results = subprocess.run(
-			["ansible-playbook", playbook, '-i', playbooks['inventory'][0]],
+			["ansible-playbook", playbook, '-i', inventoryPath],
 			check=True,
 			stdout=subprocess.PIPE,
 			stderr=subprocess.PIPE
@@ -93,11 +97,11 @@ def createVM():
 	print("Starting VM creation...")
 	
 	#runs the webserver playbook
-	#if not runPlaybook(playbooks["webserver"][0]):
+	#if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
 	#	return #stops if playbook fails
 	
 	#runs the firewall playbook
-	if not runPlaybook(playbooks["webserver"][1]):
+	if not runPlaybook(playbooks["firewall"][0], playbooks["inventory"]["firewall"]):
 		return #stops if playbook fails
 
 	# Get's the Ip of the new VM
