@@ -34,17 +34,16 @@
             type: iso
             iso_path: >-
               {{ '[VMs] ISOs/SERVER_EVAL_x64FRE_en-us.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-24.04.2-live-server-amd64.iso' }}
+          - controller_number: 0
+            unit_number: 1
+            state: present
+            type: iso
+            iso_path: "[VMs] Ubuntu Files/cidata.iso"
         networks:
           - name: VLAN30 - host VMs
             dns_servers: 10.0.1.50
             type: dhcp
         wait_for_ip_address: true
-        customization:
-            hostname: "testing VM"
-            timezone: "America/Chicago"
-            dns_servers:
-              - "10.0.1.50"
-            password: "test"
       delegate_to: localhost
       ignore_errors: true
 
