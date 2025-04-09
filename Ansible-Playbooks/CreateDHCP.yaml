@@ -11,6 +11,6 @@
       register: dhcp_scope_results
       vars:
         ansible_become_method: runas
-        ansible_become_user: "{{ win_user }}"
-        ansible_become_password: "{{ win_pass }}"
+        ansible_become_user: "Administrator"
+        ansible_become_password: "CNIT490sp25"
       ignore_errors: yes

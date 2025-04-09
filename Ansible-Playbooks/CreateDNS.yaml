@@ -3,10 +3,12 @@
   hosts: winServer
   gather_facts: no
   become: yes
+  become_method: runas
+  become_user: Administrator
   tasks:
     - name: create new A records 
       community.windows.win_dns_record:
-        name: "" #Name of Record
+        name: "TesstDELETE" #Name of Record
         type: "A"
-        value: "" #Ip address
-        zone: "" #Name of zone scope to manage
+        value: "100.100.100.100" #Ip address
+        zone: "menards.local" #Name of zone scope to manage
