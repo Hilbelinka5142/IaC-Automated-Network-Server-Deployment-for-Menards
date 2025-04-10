@@ -10,7 +10,7 @@ base_dir = os.path.dirname(__file__)
 ansible_dir = os.path.expanduser("~/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks")
 firewall_dir = os.path.expanduser("/home/deploymentvm/Desktop/Ansible/Firewall")
 playbooks = {
-    'webserver': [os.path.join(ansible_dir, 'CreateVM.yaml')],
+    'webserver': [os.path.join(ansible_dir, 'CreateVM.yaml'), (ansible_dir, 'CreateDHCP.yaml')],
     'request': [os.path.join(base_dir, 'requests')],
     'firewall': [os.path.join(firewall_dir, 'fortinet_policy_change.yaml')],
     'inventory': {
@@ -69,7 +69,7 @@ def runPlaybook(playbook, inventoryPath):
 # Checks the status of the VM
 def checkServerStatus(ipAddress):
     # Get's the current operating system
-    system_platform = platform.system()# TODO maybe change if I can just grab data from the front end for what operating system they chose to boot
+    system_platform = platform.system()# TODO maybe change if I can just grab data from the front end for what operating system they chose to boot. need to get VM data
 
     if system_platform == "Linux":
         ping_command = ["ping", "-c", "4", ipAddress]
@@ -94,23 +94,27 @@ def checkServerStatus(ipAddress):
 
 # Main function that runs playbook function and checks vm status
 def createVM():
-	print("Starting VM creation...")
-	
-	#runs the webserver playbook
-	if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
-		return #stops if playbook fails
-	
-	#runs the firewall playbook
-	if not runPlaybook(playbooks["firewall"][0], playbooks["inventory"]["firewall"]):
-		return #stops if playbook fails
+    print("Starting VM creation...")
 
-	# Get's the Ip of the new VM
-	vmIP = ""
+    #runs the webserver playbook
+    if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
+        return #stops if playbook fails
 
-	while not checkServerStatus(vmIP):
-		print("Waiting for VM to come online...")
-		time.sleep(10) #waits 10 seconds before retrying
+    #runs the firewall playbook
+    if not runPlaybook(playbooks["firewall"][0], playbooks["inventory"]["firewall"]):
+        return #stops if playbook fails
 
-	print(f"Your VM was successfully created with the IP address of: {vmIP}")
+    #runs the DHCP playbook  
+    if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]): #TODO: need to make sure playbook collects correct VM data once it boots
+        return #stops if playbook fails
+
+    # Get's the Ip of the new VM
+    vmIP = ""
+
+    while not checkServerStatus(vmIP):
+        print("Waiting for VM to come online...")
+        time.sleep(10) #waits 10 seconds before retrying
+
+    print(f"Your VM was successfully created with the IP address of: {vmIP}")
 	
 createVM()
