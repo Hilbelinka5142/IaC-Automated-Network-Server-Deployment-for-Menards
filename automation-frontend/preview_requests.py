@@ -104,7 +104,7 @@ def createVM():
     if not runPlaybook(playbooks["firewall"][0], playbooks["inventory"]["firewall"]):
         return #stops if playbook fails
 
-    #runs the DHCP playbook  
+    #runs the DNS playbook  
     if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]): #TODO: need to make sure playbook collects correct VM data once it boots
         return #stops if playbook fails
 
