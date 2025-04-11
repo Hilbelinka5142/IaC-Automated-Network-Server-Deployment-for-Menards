@@ -10,7 +10,7 @@ base_dir = os.path.dirname(__file__)
 ansible_dir = os.path.expanduser("~/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks")
 firewall_dir = os.path.expanduser("/home/deploymentvm/Desktop/Ansible/Firewall")
 playbooks = {
-    'webserver': [os.path.join(ansible_dir, 'CreateVM.yaml'), (ansible_dir, 'CreateDHCP.yaml')],
+    'webserver': [os.path.join(ansible_dir, 'CreateVM.yaml'), (ansible_dir, 'CreateDNS.yaml')],
     'request': [os.path.join(base_dir, 'requests')],
     'firewall': [os.path.join(firewall_dir, 'fortinet_policy_change.yaml')],
     'inventory': {
