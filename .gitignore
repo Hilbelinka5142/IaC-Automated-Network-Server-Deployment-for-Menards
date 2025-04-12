@@ -1,0 +1,4 @@
+*.iso
+*.html
+*temp
+/automated-frontend/requests/*.json
