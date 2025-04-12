@@ -1,7 +1,6 @@
 esxi:
   hostname: "10.0.1.40"
   username: "root"
-  password: "CNIT490sp25"
   vmname: "Test_VM"
   datacenter: "ha-datacenter"
 

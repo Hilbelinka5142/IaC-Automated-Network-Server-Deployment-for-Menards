@@ -4,6 +4,8 @@
   gather_facts: no
   become: yes
   become_method: runas
+  vars_files:
+    - ~/Ansible-Playbooks/vars/pass.yaml
 # Creates a DHCP scope with running shell commands. Should change name, starting/ending range with variables
   tasks:
     - name: Create DHCP scope
@@ -12,5 +14,5 @@
       vars:
         ansible_become_method: runas
         ansible_become_user: "Administrator"
-        ansible_become_password: "CNIT490sp25"
+        ansible_become_password: "{{ win.password }}"
       ignore_errors: yes
