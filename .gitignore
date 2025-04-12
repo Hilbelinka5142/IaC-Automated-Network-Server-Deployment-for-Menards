@@ -1,4 +1,5 @@
 *.iso
 *.html
 *temp
-/automated-frontend/requests/*.json
+/requests/*.json
+pass.yaml
