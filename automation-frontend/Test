@@ -102,16 +102,28 @@ localhost | SUCCESS => {
 
 
 
-xorriso -as mkisofs \
-  -r -V "Ubuntu-Autoinstall" \
-  -o ~/ubuntu-iso-new/ubuntu-20.04.6-autoinstall.iso \
-  -J -joliet-long -l \
-  -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
-  -partition_offset 16 \
-  -c isolinux/boot.cat \
-  -b isolinux/isolinux.bin \
-    -no-emul-boot -boot-load-size 4 -boot-info-table \
-  -eltorito-alt-boot \
-  -e boot/grub/efi.img \
-    -no-emul-boot \
-  ~/ubuntu-iso-mod
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US
+  keyboard:
+    layout: us
+    variant: ""
+  timezone: America/Chicago
+  identity:
+    hostname: vm01
+    username: test
+    password: "$6$Yr2BjNbHoQwS.SsQSVfT7U8oPTIDFLTNDuR8jQ/yTlPvb0Otdk1waktVt1HnE4ZZcVrpOKR86tTQ6e208rjPpsucDoEvQt/r3rEh1"
+  ssh:
+    install-server: true
+    authorized-keys:
+      - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCpz...your_full_key_here"
+  storage:
+    layout:
+      name: direct
+  packages:
+    - openssh-server
+  late-commands:
+    - curtin in-target --target=/target -- chmod 440 /etc/sudoers.d/test
+    - curtin in-target --target=/target -- chown root:root /etc/sudoers.d/test
+    - echo 'test ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/test
