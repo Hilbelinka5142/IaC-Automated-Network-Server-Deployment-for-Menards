@@ -102,23 +102,16 @@ localhost | SUCCESS => {
 
 
 
-#cloud-config
-timezone: America/Chicago
-
-keyboard:
-  layout: us
-  variant: ""
-
-users:
-  - name: test
-    gecos: Test User
-    groups: sudo
-    shell: /bin/bash
-    sudo: ['ALL=(ALL) NOPASSWD:ALL']
-    ssh_authorized_keys:
-      - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCpzCGfmhwjQyMPqCapZStq2zYi0ld9jjlsZg9ELI7SHRqN48a1FQGE7y1X68QuHuwIqFCfZwrCQYbsohEblZsFwug5a8eB1c/hUWwgsFZqfVb82iXG9crXYuNinpKPKTMntAfPKTw0KuZlxeIlAOXnPd6u9yw+JhIRDZ3yXcwq0oHm3CmTIV7b/1AEkG0anrLWmNktRGq7zbm7LYxgpw7Ba6iR8yJZFlNcq22XkKq0U6FMxdEVILwe00DX6bnVmEChZ/iMICH366Jx//NC0IQFw9rwIxsmh773a8rep4gGb/leL6UHaWhH7i97ka0BynIdY1ts7+2HamwT7x/FfYbIqPYCBpSuew/j2zOi/jFSrnF3Yh+DqxMMNJAvNEyDgz24NyE5OZ4YUlDHo3+X/LbUvhqzSMaMHI7jt47xBKzdqtvE6Cp5KufXN++Fwa7yOhvVfZ1eBwKTaDIF7AztoHOfWVZjZXRLJUrcT0U+9fN8ereq+eov1DeQH+r/fmIUnstojej47kK/PzPXcRODro/5eJDoNB7v5nPVBiO2HGmikdJiFeMEPNsCPTI6BK7NQRtnmB6rk8jMPfoFZ3I6l6ouWzwotIhSyYnk66qaehgz6mt/bKd6nXAPhwtJUMlz/GGGcve6QnvqU97FZuLt2jx3oeT3Fcns0LAMii9tklQhew== root@10.0.1.40"
-    lock_passwd: false
-    passwd: "$6$Yr2BjNbHoQwS.SsQ$VfrT7U8oPITDFLTNDuR8jQ/yTlPvb0Otdk1waktVt1HnE4Z2cVrpK0R86tTQ6e2O8rjPpsucDoEvQt/r3rEh1/"
-
-chpasswd:
-  expire: false
+xorriso -as mkisofs \
+  -r -V "Ubuntu-Autoinstall" \
+  -o ~/ubuntu-iso-new/ubuntu-20.04.6-autoinstall.iso \
+  -J -joliet-long -l \
+  -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
+  -partition_offset 16 \
+  -c isolinux/boot.cat \
+  -b isolinux/isolinux.bin \
+    -no-emul-boot -boot-load-size 4 -boot-info-table \
+  -eltorito-alt-boot \
+  -e boot/grub/efi.img \
+    -no-emul-boot \
+  ~/ubuntu-iso-mod
