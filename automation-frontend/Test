@@ -104,12 +104,8 @@ localhost | SUCCESS => {
 
 xorriso -as mkisofs \
   -r -V "Ubuntu Autoinstall" \
-  -J -l -b isolinux/isolinux.bin \
-  -c isolinux/boot.cat \
-  -no-emul-boot -boot-load-size 4 -boot-info-table \
-  --grub2-mbr ~/ubuntu-iso-mod/boot/grub/boot_hybrid.img \
-  -eltorito-alt-boot \
-  -e EFI/BOOT/bootx64.efi \
-  -no-emul-boot -isohybrid-gpt-basdat \
   -o ~/ubuntu-iso-new/ubuntu-20.04.6-autoinstall.iso \
+  -J -joliet-long -l -cache-inodes \
+  -e EFI/BOOT/BOOTx64.EFI \
+  -no-emul-boot -isohybrid-gpt-basdat \
   ~/ubuntu-iso-mod
