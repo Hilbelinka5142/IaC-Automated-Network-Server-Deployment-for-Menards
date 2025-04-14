@@ -70,7 +70,7 @@ def submit():
         print(f"Saved request to: {filepath}")
         
         #Automatically run preview_requests.py after submission
-        subprocess.run(['python', 'preview_requests.py'])
+        subprocess.Popen(['python3', 'preview_requests.py'])
 
         # Return a basic success message to the user
         return "Request submitted and saved successfully!"

@@ -1,9 +1,9 @@
 cpu: 2
-expiration: '2025-04-04'
+expiration: '2025-04-13'
 memory: 4
 os: Ubuntu
-reason: Testing customization
-requester_first_name: 'Alex '
-requester_last_name: Hilbelink
+reason: Testing for automation
+requester_first_name: Luke
+requester_last_name: Lee
 storage: 64
-vm_name: newtest
+vm_name: Yepp
