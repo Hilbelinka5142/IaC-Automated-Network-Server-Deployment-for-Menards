@@ -2,6 +2,7 @@
 - hosts: esxi
   vars_files:
     - /home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml
+    - /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/vars/pass.yaml
   become: false
 
   tasks:
@@ -13,7 +14,7 @@
       community.vmware.vmware_guest:
         hostname: "10.0.1.40"
         username: "root"
-        password: "CNIT490sp25"
+        password: "{{ esxi.password }}"
         validate_certs: false
         datacenter: "ha-datacenter"
         folder: "/vm/"

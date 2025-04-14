@@ -3,3 +3,6 @@ esxi:
 
 win:
   password: "CNIT490sp25"
+
+firewall:
+  password: "password"
