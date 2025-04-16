@@ -14,7 +14,7 @@
       community.vmware.vmware_guest:
         hostname: "10.0.1.40"
         username: "root"
-        password: "{{ esxi.password }}"
+        password: "CNIT490sp25"
         validate_certs: false
         datacenter: "ha-datacenter"
         folder: "/vm/"
@@ -34,12 +34,12 @@
             state: present
             type: iso
             iso_path: >-
-              {{ '[VMs] ISOs/SERVER_EVAL_x64FRE_en-us.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-20.04.6-autoinstall.iso' }}
-          - controller_number: 0
-            unit_number: 1
-            state: present
-            type: iso
-            iso_path: "[VMs] Ubuntu Files/cidata.iso"
+              {{ '[VMs] ISOs/Win_auto.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-20.04.6-autoinstall.iso' }}
+         # - controller_number: 0
+         #   unit_number: 1
+         #   state: present
+         #   type: iso
+         #   iso_path: "[VMs] Ubuntu Files/cidata.iso" if os == 'Ubuntu'
         networks:
           - name: VLAN30 - host VMs
             dns_servers: 10.0.1.50
