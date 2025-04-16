@@ -1,0 +1,66 @@
+---
+- hosts: esxi
+  vars_files:
+    - /home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml
+    - /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/vars/pass.yaml
+  become: false
+
+  tasks:
+    - name: Calculate duration (days) between now and expiration date
+      set_fact:
+        vm_lifetime_days: "{{ ((expiration | to_datetime('%Y-%m-%d')) - (ansible_date_time.date | to_datetime('%Y-%m-%d'))).days | default(1) }}"
+
+    - name: Create VM based on form input
+      community.vmware.vmware_guest:
+        hostname: "10.0.1.40"
+        username: "root"
+        password: "CNIT490sp25"
+        validate_certs: false
+        datacenter: "ha-datacenter"
+        folder: "/vm/"
+        name: "{{ vm_name }}"
+        state: poweredon
+        guest_id: "{{ 'windows9Server64Guest' if os == 'Windows' else 'Ubuntu64Guest' }}"
+        disk:
+          - size_gb: "{{ storage | default(20) | int }}"
+            type: thin
+            datastore: VMs
+        hardware:
+          memory_mb: "{{ (memory | default(2) | int) * 1024 }}"
+          num_cpus: "{{ cpu | default(1) | int }}"
+        cdrom:
+          - controller_number: 0
+            unit_number: 0
+            state: present
+            type: iso
+            iso_path: >-
+              {{ '[VMs] ISOs/Win_auto.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-20.04.6-autoinstall.iso' }}
+          - controller_number: 0
+            unit_number: 1
+            state: present
+            type: iso
+            iso_path: >-
+              {{ '[VMs] ISOs/XMLFILE PATH.iso' if os == 'Windows' else '[VMs] Ubuntu Files/cidata.iso' }}
+        networks:
+          - name: VLAN30 - host VMs
+            dns_servers: 10.0.1.50
+            type: dhcp
+        wait_for_ip_address: true
+      delegate_to: localhost
+      ignore_errors: true
+
+# TESTING
+    - name: Schedule VM deletion in 2 minutes (for testing)
+      ansible.builtin.shell: >
+        echo "/usr/bin/ansible-playbook /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/delete_vm.yml > /tmp/delete_log.txt 2>&1" | at now + 2 minutes
+      delegate_to: localhost
+      run_once: true
+      
+    #- name: Print output of scheduled job
+     # debug:
+       # msg: "/usr/bin/ansible-playbook delete_vm.yml | at now + 2 minutes"
+
+ #   - name: Schedule VM deletion at 5:00 PM expiration date
+   #   ansible.builtin.command:
+     #   cmd: |
+        #  echo "/usr/bin/ansible-playbook delete_vm.yml" | at 5:00 {{ vm_lifetime_days }}
