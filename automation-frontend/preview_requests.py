@@ -14,8 +14,8 @@ playbooks = {
     'request': [os.path.join(base_dir, 'requests')],
     'firewall': [os.path.join(firewall_dir, 'fortinet_policy_change.yaml')],
     'inventory': {
-	'webserver': os.path.join(ansible_dir, 'inventory'),
-	'firewall': os.path.join(firewall_dir, 'inventory.ini')
+        'webserver': os.path.join(ansible_dir, 'inventory'),
+        'firewall': os.path.join(firewall_dir, 'inventory.ini')
     }
 }
 
@@ -69,7 +69,7 @@ def runPlaybook(playbook, inventoryPath):
 # Checks the status of the VM
 def checkServerStatus(ipAddress):
     # Get's the current operating system
-    system_platform = platform.system()# TODO maybe change if I can just grab data from the front end for what operating system they chose to boot. need to get VM data
+    system_platform = platform.system()                 #TODO: maybe change if I can just grab data from the front end for what operating system they chose to boot. need to get VM data
 
     if system_platform == "Linux":
         ping_command = ["ping", "-c", "4", ipAddress]
@@ -105,7 +105,7 @@ def createVM():
         return #stops if playbook fails
 
     #runs the DNS playbook  
-    if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]): #TODO: need to make sure playbook collects correct VM data once it boots
+    if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]):             #TODO: need to make sure playbook collects correct VM data once it boots
         return #stops if playbook fails
 
     # Get's the Ip of the new VM
@@ -118,3 +118,53 @@ def createVM():
     print(f"Your VM was successfully created with the IP address of: {vmIP}")
 	
 createVM()
+
+
+
+"""
+Code to Create xml file, convert it into ISO to use for windows auto install
+
+import os
+import subprocess
+import tempfile
+from pathlib import Path
+
+
+
+def generate_autounattend_iso(xml_template_path, outside_input_path, output_iso_path):
+    # Read external input (e.g., a password, username, etc.)
+    with open(outside_input_path, "r") as f:
+        outside_input = f.read()
+
+    # Replace placeholder in autounattend XML
+    with open(xml_template_path, "r") as f:
+        xml_content = f.read().replace("OUTSIDE INPUT", outside_input)
+
+    # Create a temporary directory to stage ISO contents
+    with tempfile.TemporaryDirectory() as temp_dir:
+        xml_path = Path(temp_dir) / "autounattend.xml"
+
+        with open(xml_path, "w") as f:
+            f.write(xml_content)
+
+        # Generate ISO using genisoimage or mkisofs
+        subprocess.run([
+            "genisoimage", "-o", output_iso_path, "-quiet", "-V", "AUTOUNATTEND", "-J", "-r", str(xml_path)
+        ], check=True)
+
+        print(f"autounattend ISO created: {output_iso_path}")
+
+
+
+
+Calling the function********        
+
+generate_autounattend_iso(
+    xml_template_path="~/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/xml/autounattend_template.xml",
+    outside_input_path="input.txt",                                                                                     TODO: this will come from the input from the frontend
+    output_iso_path="~/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/xml/autounattend.iso"
+)
+
+
+
+"""
