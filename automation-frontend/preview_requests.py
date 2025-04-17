@@ -4,6 +4,8 @@ import yaml
 import subprocess
 import time
 import platform
+import tempfile
+from pathlib import Path
 
 # Path to the requests/playbook directory
 base_dir = os.path.dirname(__file__)
@@ -91,6 +93,30 @@ def checkServerStatus(ipAddress):
     except subprocess.CalledProcessError:
         print(f"Server at {ipAddress} is not reachable.")
         return False
+    
+#Gets custom inputs and creates unattend.iso file for windows machine
+def generate_autounattend_iso(xml_template_path, outside_input_path, output_iso_path):
+    # Read external input (e.g., a password, username, etc.)
+    with open(outside_input_path, "r") as f:
+        outside_input = f.read()
+
+    # Replace placeholder in autounattend XML
+    with open(xml_template_path, "r") as f:
+        xml_content = f.read().replace("OUTSIDE INPUT", outside_input)
+
+    # Create a temporary directory to stage ISO contents
+    with tempfile.TemporaryDirectory() as temp_dir:
+        xml_path = Path(temp_dir) / "autounattend.xml"
+
+        with open(xml_path, "w") as f:
+            f.write(xml_content)
+
+        # Generate ISO using genisoimage or mkisofs
+        subprocess.run([
+            "genisoimage", "-o", output_iso_path, "-quiet", "-V", "AUTOUNATTEND", "-J", "-r", str(xml_path)
+        ], check=True)
+
+        print(f"autounattend ISO created: {output_iso_path}")
 
 # Main function that runs playbook function and checks vm status
 def createVM():
@@ -104,6 +130,7 @@ def createVM():
     if not runPlaybook(playbooks["firewall"][0], playbooks["inventory"]["firewall"]):
         return #stops if playbook fails
 
+''' 
     #runs the DNS playbook  
     if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]):             #TODO: need to make sure playbook collects correct VM data once it boots
         return #stops if playbook fails
@@ -116,18 +143,13 @@ def createVM():
         time.sleep(10) #waits 10 seconds before retrying
 
     print(f"Your VM was successfully created with the IP address of: {vmIP}")
-	
+'''
 createVM()
 
 
 
 """
 Code to Create xml file, convert it into ISO to use for windows auto install
-
-import os
-import subprocess
-import tempfile
-from pathlib import Path
 
 
 
