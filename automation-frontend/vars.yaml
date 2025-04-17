@@ -1,9 +1,11 @@
 cpu: 2
-expiration: '2025-04-13'
+expiration: '2025-04-18'
 memory: 4
-os: Ubuntu
-reason: Testing for automation
-requester_first_name: Luke
-requester_last_name: Lee
+os: Windows
+password: lJ5c8Z3YTRPpIlwD
+reason: testing windows autoinstall
+requester_first_name: a
+requester_last_name: h
 storage: 64
-vm_name: Yepp
+username: ah
+vm_name: Testwinauto
