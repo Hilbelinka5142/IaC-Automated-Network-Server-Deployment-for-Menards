@@ -34,12 +34,13 @@
             state: present
             type: iso
             iso_path: >-
-              {{ '[VMs] ISOs/Win_auto.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-20.04.6-autoinstall.iso' }}
-         # - controller_number: 0
-         #   unit_number: 1
-         #   state: present
-         #   type: iso
-         #   iso_path: "[VMs] Ubuntu Files/cidata.iso" if os == 'Ubuntu'
+              {{ '[VMs] ISOs/Win11_24H2_English_x64.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-20.04.6-autoinstall.iso' }}
+          - controller_number: 0
+            unit_number: 1
+            state: present
+            type: iso
+            iso_path: >-
+              {{ '[VMs] ISOs/unattend.iso' if os == 'Windows'  }}
         networks:
           - name: VLAN30 - host VMs
             dns_servers: 10.0.1.50
