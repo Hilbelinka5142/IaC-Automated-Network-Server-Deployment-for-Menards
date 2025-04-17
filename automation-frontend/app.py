@@ -1,6 +1,8 @@
 import os
 import json
 import subprocess
+import random
+import string
 from flask import Flask, render_template, request
 from datetime import datetime
 
@@ -43,10 +45,22 @@ def submit():
 
         if not (64 <= storage <= 500):
             return "Storage must be between 64 and 500 GB.", 400
+        
+        username = (requester_first_name[0] + requester_last_name).lower()
+
+        def generate_password(length=16):
+            characters = string.ascii_letters + string.digits
+            return ''.join(random.choices(characters, k=length))
+        
+        password = generate_password()
+
+
 
         data = {
             'requester_first_name': requester_first_name,
             'requester_last_name': requester_last_name,
+            'username': username,
+            'password': password,
             'vm_name': vm_name,
             'cpu': cpu,
             'memory': memory,
