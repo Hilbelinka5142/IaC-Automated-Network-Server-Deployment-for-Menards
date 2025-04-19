@@ -135,7 +135,7 @@ def createVM():
 
     #creates unattend ISO 
     generate_autounattend_iso(
-        os.path.join(ansible_dir, 'unattendTEMPLATE.xml'), 
+        os.path.join(ansible_dir, 'autounattendTEMPLATE.xml'), 
         os.path.join(frontend_dir, 'vars.yaml'),
         os.path.join(ansible_dir, 'unattend.iso')
     )
