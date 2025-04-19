@@ -70,7 +70,13 @@
             type: dhcp
         wait_for_ip_address: true
       delegate_to: localhost
+      register: vm_creation_result
       ignore_errors: true
+
+    - name: Outputs IP address of VM
+      debug: 
+        msg: "The new VM '{{ vm_name }}' has IP address: {{ vm_creation_result.instance.ipv4 }}"
+      when: vm_creation_result is defined and vm_creation_result.instance is defined and vm_creation_result.instance.ipv4 is defined
 
 # TESTING
     - name: Schedule VM deletion in 2 minutes (for testing)
