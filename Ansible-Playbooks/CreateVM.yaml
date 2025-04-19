@@ -40,7 +40,7 @@
             state: present
             type: iso
             iso_path: >-
-              {{ '[VMs] ISOs/unattend.iso' if os == 'Windows'  }}
+              {{ '[VMs] ISOs/unattend.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-20.04.6-autoinstall.iso' }}
         networks:
           - name: VLAN30 - host VMs
             dns_servers: 10.0.1.50
