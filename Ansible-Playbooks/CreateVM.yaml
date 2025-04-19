@@ -10,6 +10,41 @@
       set_fact:
         vm_lifetime_days: "{{ ((expiration | to_datetime('%Y-%m-%d')) - (ansible_date_time.date | to_datetime('%Y-%m-%d'))).days | default(1) }}"
 
+    - name: Create cdrom list
+      set_fact:
+        cdrom_list: >-
+          {{
+            [
+              {
+                "controller_number": 0,
+                "unit_number": 0,
+                "state": "present",
+                "type": "iso",
+                "iso_path": '[VMs] ISOs/Win11_24H2_English_x64.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-20.04.6-autoinstall.iso'
+              },
+              {
+                "controller_number": 0,
+                "unit_number": 1,
+                "state": "present",
+                "type": "iso",
+                "iso_path": '[VMs] ISOs/unattend.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-20.04.6-autoinstall.iso'
+              }
+            ]
+            +
+            (
+              [
+                {
+                  "controller_type": "sata",
+                  "controller_number": 2,
+                  "unit_number": 0,
+                  "state": "present",
+                  "type": "iso",
+                  "iso_path": "[VMs] ISOs/windows.iso"
+                }
+              ] if os == 'Windows' else []
+            )
+          }}
+
     - name: Create VM based on form input
       community.vmware.vmware_guest:
         hostname: "10.0.1.40"
@@ -28,19 +63,7 @@
         hardware:
           memory_mb: "{{ (memory | default(2) | int) * 1024 }}"
           num_cpus: "{{ cpu | default(1) | int }}"
-        cdrom:
-          - controller_number: 0
-            unit_number: 0
-            state: present
-            type: iso
-            iso_path: >-
-              {{ '[VMs] ISOs/Win11_24H2_English_x64.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-20.04.6-autoinstall.iso' }}
-          - controller_number: 0
-            unit_number: 1
-            state: present
-            type: iso
-            iso_path: >-
-              {{ '[VMs] ISOs/unattend.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-20.04.6-autoinstall.iso' }}
+        cdrom: "{{ cdrom_list }}"
         networks:
           - name: VLAN30 - host VMs
             dns_servers: 10.0.1.50
