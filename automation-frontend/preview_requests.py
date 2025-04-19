@@ -11,6 +11,7 @@ from pathlib import Path
 base_dir = os.path.dirname(__file__)
 ansible_dir = os.path.expanduser("~/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks")
 firewall_dir = os.path.expanduser("/home/deploymentvm/Desktop/Ansible/Firewall")
+frontend_dir = os.path.expanduser("/home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend")
 playbooks = {
     'webserver': [os.path.join(ansible_dir, 'CreateVM.yaml'), (ansible_dir, 'CreateDNS.yaml')],
     'request': [os.path.join(base_dir, 'requests')],
@@ -93,21 +94,30 @@ def checkServerStatus(ipAddress):
     except subprocess.CalledProcessError:
         print(f"Server at {ipAddress} is not reachable.")
         return False
-    
-#Gets custom inputs and creates unattend.iso file for windows machine
-def generate_autounattend_iso(xml_template_path, outside_input_path, output_iso_path):
-    # Read external input (e.g., a password, username, etc.)
-    with open(outside_input_path, "r") as f:
-        outside_input = f.read()
 
-    # Replace placeholder in autounattend XML
+# Gets custom inputs and creates unattend.iso file for Windows machine
+def generate_autounattend_iso(xml_template_path, yaml_input_path, output_iso_path):
+    # Read external input (e.g., a password, username, etc.) from the YAML file
+    with open(yaml_input_path, "r") as f:
+        input_data = yaml.safe_load(f)
+
+    # Print the input data to verify it has been loaded correctly
+    print("Loaded input data:", input_data)
+
+    # Read the XML template
     with open(xml_template_path, "r") as f:
-        xml_content = f.read().replace("OUTSIDE INPUT", outside_input)
+        xml_content = f.read()
+
+    # Replace placeholders in the XML template with values from the YAML input
+    for key, value in input_data.items():
+        # Replace all occurrences of 'key' in the XML with the corresponding 'value'
+        xml_content = xml_content.replace(f"{{{{ {key} }}}}", str(value))
 
     # Create a temporary directory to stage ISO contents
     with tempfile.TemporaryDirectory() as temp_dir:
         xml_path = Path(temp_dir) / "autounattend.xml"
 
+        # Write the updated XML content to a new file
         with open(xml_path, "w") as f:
             f.write(xml_content)
 
@@ -118,9 +128,17 @@ def generate_autounattend_iso(xml_template_path, outside_input_path, output_iso_
 
         print(f"autounattend ISO created: {output_iso_path}")
 
+
 # Main function that runs playbook function and checks vm status
 def createVM():
     print("Starting VM creation...")
+
+    #creates unattend ISO 
+    generate_autounattend_iso(
+        os.path.join(ansible_dir, 'unattendTEMPLATE.xml'), 
+        os.path.join(frontend_dir, 'vars.yaml'),
+        os.path.join(ansible_dir, 'unattend.iso')
+    )
 
     #runs the webserver playbook
     if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
