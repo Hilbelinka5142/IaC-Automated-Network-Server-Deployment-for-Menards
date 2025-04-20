@@ -133,6 +133,10 @@ def generate_autounattend_iso(xml_template_path, yaml_input_path, output_iso_pat
 def createVM():
     print("Starting VM creation...")
 
+    # Get the IP of the new VM
+    ip_file_path = os.path.join(ansible_dir, '/tmp/vmip.txt')
+    vmIP = ""
+
     #creates unattend ISO 
     generate_autounattend_iso(
         os.path.join(ansible_dir, 'autounattendTEMPLATE.xml'), 
@@ -148,20 +152,25 @@ def createVM():
     if not runPlaybook(playbooks["firewall"][0], playbooks["inventory"]["firewall"]):
         return #stops if playbook fails
 
-''' 
-    #runs the DNS playbook  
-    if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]):             #TODO: need to make sure playbook collects correct VM data once it boots
-        return #stops if playbook fails
 
-    # Get's the Ip of the new VM
-    vmIP = ""
+    #runs the DNS playbook  
+    #if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]):             #TODO: need to make sure playbook collects correct VM data once it boots
+    #    return #stops if playbook fails
+
+    if os.path.exists(ip_file_path):
+        with open(ip_file_path, 'r') as f:
+            vmIP = f.read().strip()
+
+    if not vmIP:
+        print("Failed to retrieve VM IP.")
+        
 
     while not checkServerStatus(vmIP):
         print("Waiting for VM to come online...")
-        time.sleep(10) #waits 10 seconds before retrying
+        time.sleep(10)  # waits 10 seconds before retrying
 
     print(f"Your VM was successfully created with the IP address of: {vmIP}")
-'''
+
 createVM()
 
 
