@@ -11,15 +11,6 @@
     ansible_python_interpreter: "/home/deploymentvm/Desktop/newenv/bin/python" 
 
   tasks:
-    - name: Read firewall configuration from JSON file
-      ansible.builtin.slurp:
-        src: "{{ playbook_dir }}/tmp/firewall_config.json"
-      register: firewall_config
-
-    - name: Parse JSON content into Ansible variables
-      ansible.builtin.set_fact:
-        config: "{{ firewall_config['content'] | b64decode | from_json }}"
-
     - name: Run Python script with host, user, and password arguments
       ansible.builtin.command: >
         python3 {{ playbook_dir }}/configure_firewall.py
