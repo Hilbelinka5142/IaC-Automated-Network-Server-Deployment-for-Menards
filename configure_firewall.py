@@ -4,22 +4,38 @@ import argparse
 from datetime import datetime
 from netmiko import ConnectHandler
 
-# Define path to JSON config file
-CONFIG_FILE = "tmp/firewall_config.json"
+# Directory where all request JSONs are stored
+REQUESTS_DIR = "/home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/requests"
+
+def get_latest_json_file():
+    """Return the most recent JSON request file based on timestamp in filename."""
+    files = [
+        f for f in os.listdir(REQUESTS_DIR)
+        if f.startswith("request_") and f.endswith(".json")
+    ]
+    if not files:
+        raise FileNotFoundError("No request files found in the 'requests' directory.")
+
+    # Sort by filename timestamp
+    files.sort(reverse=True)
+    return os.path.join(REQUESTS_DIR, files[0])
+
 
 def load_config():
-    """Load configuration from JSON file."""
-    if not os.path.exists(CONFIG_FILE):
-        print(f"Error: Configuration file {CONFIG_FILE} not found!")
+    """Load configuration from the latest JSON file format."""
+    try:
+        config_file = get_latest_json_file()
+        print(f"Loading configuration from: {config_file}")
+        with open(config_file, "r") as file:
+            full_data = json.load(file)
+            return {
+                "src_addr": "10.0.3.11",  # Static for now
+                "expiration": full_data.get("expiration").replace("-", "/"),
+                "services": full_data.get("firewall_services", [])
+            }
+    except Exception as e:
+        print(f"Error loading config: {e}")
         return None
-
-    with open(CONFIG_FILE, "r") as file:
-        try:
-            config = json.load(file)
-            return config
-        except json.JSONDecodeError:
-            print("Error: Failed to parse JSON configuration file.")
-            return None
 
 def get_next_policy_id(net_connect):
     """Retrieve the next available policy ID on the firewall."""
@@ -82,6 +98,8 @@ def configure_fortinet_firewall(config, host, user, password):
             ]
             net_connect.send_config_set(address_commands)
 
+            services_str = " ".join(f"\"{s}\"" for s in config["services"])
+
             # Create Firewall Policy dynamically
             policy_commands = [
                 "config firewall policy",
@@ -92,7 +110,7 @@ def configure_fortinet_firewall(config, host, user, password):
                 f"set dstaddr all",
                 "set action accept",
                 f"set schedule \"{schedule_name}\"",
-                f"set service \"{config['service']}\"",
+                f"set service {services_str}",
                 "set logtraffic all",
                 "unset nat",
                 "next",
@@ -116,6 +134,10 @@ if __name__ == "__main__":
     # Load config from JSON file
     config = load_config()
 
+    # Check if JSON config was loaded successfully
+    if config:
+        # Configure the firewall using the parsed arguments and JSON configuration
+        configure_fortinet_firewall(config, args.host, args.user, args.password)
     # Check if JSON config was loaded successfully
     if config:
         # Configure the firewall using the parsed arguments and JSON configuration
