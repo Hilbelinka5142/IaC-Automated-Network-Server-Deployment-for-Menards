@@ -2,4 +2,4 @@
 *.html
 *temp
 /requests/*.json
-pass.yaml
+/vars/pass.yaml
