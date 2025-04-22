@@ -1,11 +1,19 @@
-cpu: 2
-expiration: '2025-04-18'
-memory: 4
-os: Windows
-password: lJ5c8Z3YTRPpIlwD
-reason: testing windows autoinstall
-requester_first_name: a
-requester_last_name: h
+cpu: 4
+email: sandst2493@my.uwstout.edu
+expiration: '2025-04-26'
+firewall_services:
+- SSH
+- RDP
+- SNMP
+- PING
+- HTTP
+- HTTPS
+memory: 8
+os: Ubuntu
+password: iRH0h6n9YFBRRhv4
+reason: Testing This One
+requester_first_name: Tanner
+requester_last_name: Sands
 storage: 64
-username: ah
-vm_name: Testwinauto
+username: tsands
+vm_name: TestHelpin
