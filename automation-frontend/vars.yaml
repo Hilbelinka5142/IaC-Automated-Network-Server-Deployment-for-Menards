@@ -1,19 +1,14 @@
-cpu: 4
-email: sandst2493@my.uwstout.edu
-expiration: '2025-04-26'
+cpu: 2
+email: email@g.com
+expiration: '2025-04-23'
 firewall_services:
 - SSH
-- RDP
-- SNMP
-- PING
-- HTTP
-- HTTPS
-memory: 8
+memory: 4
 os: Ubuntu
-password: iRH0h6n9YFBRRhv4
-reason: Testing This One
-requester_first_name: Tanner
-requester_last_name: Sands
+password: V1rhgLeK8oM37Yoh
+reason: testing IP output
+requester_first_name: al
+requester_last_name: h
 storage: 64
-username: tsands
-vm_name: TestHelpin
+username: ah
+vm_name: test4
