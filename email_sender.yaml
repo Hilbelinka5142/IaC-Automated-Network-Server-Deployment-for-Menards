@@ -5,7 +5,7 @@
   tasks:
     - name: Run email-sending Python script
       ansible.builtin.command: >
-        python3 {{ playbook_dir }}/send_credentials_email.py
+        python3 {{ playbook_dir }}/email_sender.py
       register: email_output
 
     - name: Show script output
