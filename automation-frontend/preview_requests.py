@@ -102,8 +102,7 @@ def checkServerStatus(ipAddress, vars_file_path):
         print(f"Server at {ipAddress} is not reachable.")
         return False
     
-
-'''    
+    
 # Gets custom inputs and creates unattend.iso file for Windows machine
 def generate_autounattend_iso(xml_template_path, yaml_input_path, output_iso_path):
     # Read external input (e.g., a password, username, etc.) from the YAML file
@@ -136,48 +135,58 @@ def generate_autounattend_iso(xml_template_path, yaml_input_path, output_iso_pat
         ], check=True)
 
         print(f"autounattend ISO created: {output_iso_path}")
-'''
-
 
 # Main function that runs playbook function and checks vm status
 def createVM():
     print("Starting VM creation...")
 
     # Get the IP of the new VM
-    ip_file_path = os.path.join(ansible_dir, 'tmp/vmip.txt')
+    ip_file_path = os.path.join(ansible_dir, '/tmp/vmip.txt')
     vmIP = ""
+    maxRetries = 60
+    retries = 0
 
     #creates unattend ISO 
-    #generate_autounattend_iso(
-    #    os.path.join(ansible_dir, 'autounattendTEMPLATE.xml'), 
-    #    os.path.join(frontend_dir, 'vars.yaml'),
-    #    os.path.join(ansible_dir, 'unattend.iso')
-    #)
+    generate_autounattend_iso(
+        os.path.join(ansible_dir, 'autounattendTEMPLATE.xml'), 
+        os.path.join(frontend_dir, 'vars.yaml'),
+        os.path.join(ansible_dir, 'unattend.iso')
+    )
 
 
     #runs the webserver playbook
     if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
-        return #stops if playbook fails
+        return 
 
     #runs the firewall playbook
     if not runPlaybook(playbooks["firewall"][0], playbooks["inventory"]["firewall"]):
-        return #stops if playbook fails
+        return 
 
 
     #runs the DNS playbook  
     #if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]):             #TODO: need to make sure playbook collects correct VM data once it boots
-    #    return #stops if playbook fails
+    #    return
 
-    if os.path.exists(ip_file_path):
-        with open(ip_file_path, 'r') as f:
-            vmIP = f.read().strip()
+    while retries < maxRetries:
+        if os.path.exists(ip_file_path):
+            with open(ip_file_path, 'r') as f:
+                vmIP = f.read().strip()
+            if vmIP:
+                break
+        
+        print("Waiting for VM IP to be written...")
+        time.sleep(30)
+        retries += 1
 
     if not vmIP:
-        print("Failed to retrieve VM IP.")
-
+         print("Failed to retrieve VM IP after waiting.")
+         return
+    
+    print(f"VM IP retrieved: {vmIP}")
+        
     while not checkServerStatus(vmIP, os.path.join(frontend_dir, 'vars.yaml')):
         print("Waiting for VM to come online...")
-        time.sleep(10)  # waits 10 seconds before retrying
+        time.sleep(30)
 
     print(f"Your VM was successfully created with the IP address of: {vmIP}")
 
