@@ -25,16 +25,19 @@ def submit():
     try:
         requester_first_name = request.form.get('requester_first_name')
         requester_last_name = request.form.get('requester_last_name')
+        email = request.form.get('email')
         vm_name = request.form.get('vm_name')
         cpu = int(request.form.get('cpu'))
         memory = int(request.form.get('memory'))
         storage = int(request.form.get('storage'))
         os_type = request.form.get('os')
         expiration = request.form.get('expiration')
+        firewall_services_raw = request.form.get('firewall_services', '')
+        firewall_services = [s.strip() for s in firewall_services_raw.split(',') if s.strip()]
         reason = request.form.get('reason')
 
         # Basic validation rules
-        if not all([requester_first_name, requester_last_name, vm_name, cpu, memory, storage, os_type, expiration, reason]):
+        if not all([requester_first_name, requester_last_name, email, vm_name, cpu, memory, storage, os_type, expiration, firewall_services, reason]):
             return "All fields are required.", 400
 
         if not (2 <= cpu <= 16):
@@ -59,6 +62,7 @@ def submit():
         data = {
             'requester_first_name': requester_first_name,
             'requester_last_name': requester_last_name,
+            'email': email,
             'username': username,
             'password': password,
             'vm_name': vm_name,
@@ -67,6 +71,7 @@ def submit():
             'storage': storage,
             'os': os_type,
             'expiration': expiration,
+            'firewall_services': firewall_services,
             'reason': reason
         }
 
@@ -87,7 +92,7 @@ def submit():
         subprocess.Popen(['python3', 'preview_requests.py'])
 
         # Return a basic success message to the user
-        return "Request submitted and saved successfully!"
+        return "Request submitted and saved successfully!<br>Your VM credentials will be emailed to you once completed!"
     
     except Exception as e:
         print(f"Error processing form: {e}")
