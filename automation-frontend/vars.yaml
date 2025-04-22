@@ -1,14 +1,14 @@
 cpu: 2
-email: email@g.com
+email: h@g.com
 expiration: '2025-04-23'
 firewall_services:
 - SSH
 memory: 4
-os: Ubuntu
-password: V1rhgLeK8oM37Yoh
-reason: testing IP output
-requester_first_name: al
+os: Windows
+password: mZIEw2XGbhZA8fWp
+reason: Testing server status
+requester_first_name: a
 requester_last_name: h
 storage: 64
 username: ah
-vm_name: test4
+vm_name: Test8
