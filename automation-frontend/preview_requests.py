@@ -144,7 +144,7 @@ def createVM():
     print("Starting VM creation...")
 
     # Get the IP of the new VM
-    ip_file_path = os.path.join(ansible_dir, '/tmp/vmip.txt')
+    ip_file_path = os.path.join(ansible_dir, 'tmp/vmip.txt')
     vmIP = ""
 
     #creates unattend ISO 
@@ -174,8 +174,7 @@ def createVM():
 
     if not vmIP:
         print("Failed to retrieve VM IP.")
-        
-    print(vmIP)
+
     while not checkServerStatus(vmIP, os.path.join(frontend_dir, 'vars.yaml')):
         print("Waiting for VM to come online...")
         time.sleep(10)  # waits 10 seconds before retrying
