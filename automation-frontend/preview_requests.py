@@ -70,16 +70,23 @@ def runPlaybook(playbook, inventoryPath):
 	return True
 
 # Checks the status of the VM
-def checkServerStatus(ipAddress):
-    # Get's the current operating system
-    system_platform = platform.system()                 #TODO: maybe change if I can just grab data from the front end for what operating system they chose to boot. need to get VM data
+def checkServerStatus(ipAddress, vars_file_path):
+    # Load OS type from vars.yaml
+    try:
+        with open(vars_file_path, 'r') as f:
+            vars_data = yaml.safe_load(f)
+            selected_os = vars_data.get("os", "").lower()
+    except Exception as e:
+        print(f"Error loading OS from vars.yaml: {e}")
+        return False
 
-    if system_platform == "Linux":
+    # Determine ping command based on the selected OS
+    if selected_os == "linux" or selected_os == "ubuntu":
         ping_command = ["ping", "-c", "4", ipAddress]
-    elif system_platform == "Windows":
+    elif selected_os == "windows":
         ping_command = ["ping", "-n", "4", ipAddress]
     else:
-        print(f"Unsupported platform: {system_platform}")
+        print(f"Unsupported OS selected in vars.yaml: {selected_os}")
         return False
 
     try:
@@ -168,8 +175,8 @@ def createVM():
     if not vmIP:
         print("Failed to retrieve VM IP.")
         
-
-    while not checkServerStatus(vmIP):
+    print(vmIP)
+    while not checkServerStatus(vmIP, os.path.join(frontend_dir, 'vars.yaml')):
         print("Waiting for VM to come online...")
         time.sleep(10)  # waits 10 seconds before retrying
 
