@@ -94,6 +94,8 @@ def checkServerStatus(ipAddress):
     except subprocess.CalledProcessError:
         print(f"Server at {ipAddress} is not reachable.")
         return False
+    
+
 '''    
 # Gets custom inputs and creates unattend.iso file for Windows machine
 def generate_autounattend_iso(xml_template_path, yaml_input_path, output_iso_path):
@@ -139,11 +141,12 @@ def createVM():
     vmIP = ""
 
     #creates unattend ISO 
-    generate_autounattend_iso(
-        os.path.join(ansible_dir, 'autounattendTEMPLATE.xml'), 
-        os.path.join(frontend_dir, 'vars.yaml'),
-        os.path.join(ansible_dir, 'unattend.iso')
-    )
+    #generate_autounattend_iso(
+    #    os.path.join(ansible_dir, 'autounattendTEMPLATE.xml'), 
+    #    os.path.join(frontend_dir, 'vars.yaml'),
+    #    os.path.join(ansible_dir, 'unattend.iso')
+    #)
+
 
     #runs the webserver playbook
     if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
