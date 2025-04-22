@@ -9,6 +9,18 @@
     - name: Calculate duration (days) between now and expiration date
       set_fact:
         vm_lifetime_days: "{{ ((expiration | to_datetime('%Y-%m-%d')) - (ansible_date_time.date | to_datetime('%Y-%m-%d'))).days | default(1) }}"
+      
+    - name: Upload dynamic ISO to datastore
+      community.vmware.vsphere_copy:
+        hostname: "{{ esxi.hostname }}"
+        username: "{{ esxi.username }}"
+        password: "{{ esxi.password }}"
+        validate_certs: false
+        src: "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/unattend.iso"
+        datacenter: "ha-datacenter"
+        datastore: "VMs"
+        path: "ISOs/{{ vm_name }}_unattend.iso"
+      delegate_to: localhost
 
     - name: Create cdrom list
       set_fact:
@@ -27,7 +39,7 @@
                 "unit_number": 1,
                 "state": "present",
                 "type": "iso",
-                "iso_path": '[VMs] ISOs/unattend.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-20.04.6-autoinstall.iso'
+                "iso_path": '[VMs] ISOs/{{ vm_name }}_unattend.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-20.04.6-autoinstall.iso'
               }
             ]
             +
@@ -47,9 +59,9 @@
 
     - name: Create VM based on form input
       community.vmware.vmware_guest:
-        hostname: "10.0.1.40"
-        username: "root"
-        password: "CNIT490sp25"
+        hostname: "{{ esxi.hostname }}"
+        username: "{{ esxi.username }}"
+        password: "{{ esxi.password }}"
         validate_certs: false
         datacenter: "ha-datacenter"
         folder: "/vm/"
@@ -78,6 +90,7 @@
         content: "{{ vm_creation_result.instance.ipv4 }}"
         dest: "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/vmip.txt"
       delegate_to: localhost
+
 
 # TESTING
     - name: Schedule VM deletion in 2 minutes (for testing)
