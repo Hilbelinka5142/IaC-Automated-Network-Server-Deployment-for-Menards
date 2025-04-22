@@ -109,6 +109,9 @@ def createVM():
     if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]): #TODO: need to make sure playbook collects correct VM data once it boots
         return #stops if playbook fails
 
+    if not runPlaybook(playbooks["email"][0], playbooks["inventory"]["firewall"]):
+        return #stops if playbook fails
+
     # Get's the Ip of the new VM
     vmIP = ""
 
@@ -118,12 +121,6 @@ def createVM():
 
     print(f"Your VM was successfully created with the IP address of: {vmIP}")
 
-    # Finally, send the credentials via email
-    if not runPlaybook(playbooks["email"][0], playbooks["inventory"]["firewall"]):
-        print("WARNING: Failed to send email with credentials.")
-    else:
-        print("Credentials have been emailed to the user.")
-	
 createVM()
 
 
