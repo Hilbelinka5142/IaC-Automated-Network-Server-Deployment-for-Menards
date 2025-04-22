@@ -76,8 +76,8 @@
     - name: Outputs IP address of VM to file
       copy:
         content: "{{ vm_creation_result.instance.ipv4 }}"
-        dest: "~/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/vmip.txt"
-      delegate_to: loclahost
+        dest: "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/vmip.txt"
+      delegate_to: localhost
 
 # TESTING
     - name: Schedule VM deletion in 2 minutes (for testing)
