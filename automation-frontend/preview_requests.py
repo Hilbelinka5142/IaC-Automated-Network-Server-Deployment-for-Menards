@@ -94,16 +94,7 @@ def checkServerStatus(ipAddress):
     except subprocess.CalledProcessError:
         print(f"Server at {ipAddress} is not reachable.")
         return False
-<<<<<<< HEAD
-=======
 '''    
-#Gets custom inputs and creates unattend.iso file for windows machine
-def generate_autounattend_iso(xml_template_path, outside_input_path, output_iso_path):
-    # Read external input (e.g., a password, username, etc.)
-    with open(outside_input_path, "r") as f:
-        outside_input = f.read()
->>>>>>> 91ab767 (updated)
-
 # Gets custom inputs and creates unattend.iso file for Windows machine
 def generate_autounattend_iso(xml_template_path, yaml_input_path, output_iso_path):
     # Read external input (e.g., a password, username, etc.) from the YAML file
