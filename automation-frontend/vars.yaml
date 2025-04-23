@@ -1,15 +1,16 @@
 cpu: 2
-email: Hilbelinka5142@my.uwstout.edu
+email: andersena0270@my.uwstout.edu
 expiration: '2025-04-24'
 firewall_services:
 - SSH
-memory: 4
-os: Windows
-password: Jfyhu5jyGpRE8igs
-password_hash: $6$lqxB8Yw4kJJ7X1uU$j2Sx2xT4UG91kDivjXWg/4e17yiHJ6IKoZEyjQ5fzmhVDrS.5qOPSggIIjz1sjfBtbgPjsASR4uqb9ORC7dpA0
-reason: testing
-requester_first_name: alex
-requester_last_name: hilb
-storage: 64
-username: ahilb
-vm_name: test12
+- RDP
+memory: 8
+os: Ubuntu
+password: 6QAuOEbyzkC3udWA
+password_hash: $6$J.9CBJKe3yYAKCfz$CCzx9nZTSjzwzS5TyPw/RtnUPvVOtVCqaZLFfb83KOnWd2B/AQE83ILCKk9GrC73cUJsnwCdcUoZV9/c101.K.
+reason: I need it because i do
+requester_first_name: Ally
+requester_last_name: Andersen
+storage: 100
+username: aandersen
+vm_name: 'Test Live '

@@ -13,7 +13,10 @@ ansible_dir = os.path.expanduser("~/Desktop/IaC-Automated-Network-Server-Deploym
 firewall_dir = os.path.expanduser("/home/deploymentvm/Desktop/Ansible/Firewall")
 frontend_dir = os.path.expanduser("/home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend")
 playbooks = {
-    'webserver': [os.path.join(ansible_dir, 'CreateVM.yaml'), (ansible_dir, 'CreateDNS.yaml')],
+    'webserver': [
+        os.path.join(ansible_dir, 'CreateVM.yaml'), 
+        os.path.join(ansible_dir, 'CreateDNS.yaml')
+        ],
     'request': [os.path.join(base_dir, 'requests')],
     'firewall': [os.path.join(firewall_dir, 'fortinet_policy_change.yaml')],
     'email': [os.path.join(firewall_dir, 'email_sender.yaml')],
@@ -82,14 +85,12 @@ def checkServerStatus(ipAddress, vars_file_path):
     except subprocess.CalledProcessError:
         print(f"Server at {ipAddress} is not reachable.")
         return False
-<<<<<<< HEAD
-    
+
 # Gets custom inputs and creates unattend.iso file for Windows machine
-=======
+
 
 
 # Windows: Generate unattend.iso
->>>>>>> 6ef571f (updated)
 def generate_autounattend_iso(xml_template_path, yaml_input_path, output_iso_path):
     with open(yaml_input_path, "r") as f:
         input_data = yaml.safe_load(f)
@@ -133,52 +134,30 @@ def createVM():
         print(f"Unsupported OS for ISO generation: {selected_os}")
         return
 
-<<<<<<< HEAD
-    #creates unattend ISO 
-    generate_autounattend_iso(
-        os.path.join(ansible_dir, 'autounattendTEMPLATE.xml'), 
-        os.path.join(frontend_dir, 'vars.yaml'),
-        os.path.join(ansible_dir, 'unattend.iso')
-    )
 
-    #runs the webserver playbook
-    if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
-        return #stops if playbook fails
-
-    #runs the firewall playbook
-    if not runPlaybook(playbooks["firewall"][0], playbooks["inventory"]["firewall"]):
-        return #stops if playbook fails
-
-    #runs the DNS playbook  
-    #if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]): #TODO: need to make sure playbook collects correct VM data once it boots
-    #    return #stops if playbook fails
-
-    # Finally, send the credentials via email
-=======
-    # Run VM creation playbook
+    # Run webserver playbook
     if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
         return
         
+    # Run firewall playbook    
     if not runPlaybook(playbooks["firewall"][0], playbooks["inventory"]["firewall"]):
         return
         
     # Runs DNS playbook (disabled)
-    # if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]):
-    #     return
->>>>>>> 6ef571f (updated)
+    # if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]): #TODO: need to make sure playbook collects correct VM data once it boots
+    #     return #stops if playbook fails
+
+
+    # Finally, send the credentials via email
     if not runPlaybook(playbooks["email"][0], playbooks["inventory"]["firewall"]):
         print("WARNING: Failed to send email with credentials.")
     else:
         print("Credentials have been emailed to the user.")
-<<<<<<< HEAD
-    
-    while retries < maxRetries:
-=======
+        
 
     ip_file_path = os.path.join(ansible_dir, 'tmp/vmip.txt')
     vmIP = ""
     for _ in range(60):
->>>>>>> 6ef571f (updated)
         if os.path.exists(ip_file_path):
             with open(ip_file_path, 'r') as f:
                 vmIP = f.read().strip()
@@ -199,7 +178,4 @@ def createVM():
     print(f"Your VM was successfully created with the IP address of: {vmIP}")
 
 createVM()
-<<<<<<< HEAD
-=======
 
->>>>>>> 6ef571f (updated)

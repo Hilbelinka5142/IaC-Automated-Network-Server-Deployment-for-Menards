@@ -1,0 +1,27 @@
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US
+  keyboard:
+    layout: us
+    variant: ""
+  timezone: America/Chicago
+  identity:
+    hostname: {{ vm_name }}
+    username: {{ username }}
+    password: "{{ password_hash }}"
+  ssh:
+    install-server: true
+    authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCpzCGfmhwjQyMPqCapZStq2zYi0ld9jjlsZg9ELI7SHRqN48a1FQGE7y1X68QuHuwIqFCfZwrCQYbsohEblZsFwug5a8eB1c/hUWwgsFZqfVb82iXG9crXYuNinpKPKTMntAfPKTw0KuZlxeIlAOXnPd6u9yw+JhIRDZ3yXcwq0oHm3CmTIV7b/1AEkG0anrLWmNktRGq7zbm7LYxgpw7Ba6iR8yJZFlNcq22XkKq0U6FMxdEVILwe00DX6bnVmEChZ/iMICH366Jx//NC0IQFw9rwIxsmh773a8rep4gGb/leL6UHaWhH7i97ka0BynIdY1ts7+2HamwT7x/FfYbIqPYCBpSuew/j2zOi/jFSrnF3Yh+DqxMMNJAvNEyDgz24NyE5OZ4YUlDHo3+X/LbUvhqzSMaMHI7jt47xBKzdqtvE6Cp5KufXN++Fwa7yOhvVfZ1eBwKTaDIF7AztoHOfWVZjZXRLJUrcT0U+9fN8ereq+eov1DeQH+r/fmIUnstojej47kK/PzPXcRODro/5eJDoNB7v5nPVBiO2HGmikdJiFeMEPNsCPTI6BK7NQRtnmB6rk8jMPfoFZ3I6l6ouWzwotIhSyYnk66qaehgz6mt/bKd6nXAPhwtJUMlz/GGGcve6QnvqU97FZuLt2jx3oeT3Fcns0LAMii9tklQhew== root@10.0.1.40
+  storage:
+    layout:
+      name: direct
+  packages:
+    - openssh-server
+
+runcmd:
+  - [eval, 'echo $(cat /proc/cmdline) "autoinstall" > /root/cmdline']
+  - [eval, 'mount -n --bind -o ro /root/cmdline /proc/cmdline']
+  - [eval, 'snap restart subiquity.subiquity-service']
+
