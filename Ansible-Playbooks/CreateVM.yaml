@@ -12,9 +12,9 @@
       
     - name: Upload dynamic ISO to datastore
       community.vmware.vsphere_copy:
-        hostname: "{{ esxi.hostname }}"
-        username: "{{ esxi.username }}"
-        password: "{{ esxi.password }}"
+        hostname: "10.0.1.40"
+        username: "root"
+        password: "CNIT490sp25"
         validate_certs: false
         src: "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/unattend.iso"
         datacenter: "ha-datacenter"
@@ -59,9 +59,9 @@
 
     - name: Create VM based on form input
       community.vmware.vmware_guest:
-        hostname: "{{ esxi.hostname }}"
-        username: "{{ esxi.username }}"
-        password: "{{ esxi.password }}"
+        hostname: "10.0.1.40"
+        username: "root"
+        password: "CNIT490sp25"
         validate_certs: false
         datacenter: "ha-datacenter"
         folder: "/vm/"
