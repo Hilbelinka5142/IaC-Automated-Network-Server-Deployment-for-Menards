@@ -3,8 +3,10 @@ import json
 import subprocess
 import random
 import string
+import crypt
 from flask import Flask, render_template, request
 from datetime import datetime
+
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -57,7 +59,7 @@ def submit():
         
         password = generate_password()
 
-
+        password_hash = crypt.crypt(password, crypt.mksalt(crypt.METHOD_SHA512))
 
         data = {
             'requester_first_name': requester_first_name,
@@ -65,6 +67,7 @@ def submit():
             'email': email,
             'username': username,
             'password': password,
+            'password_hash': password_hash,
             'vm_name': vm_name,
             'cpu': cpu,
             'memory': memory,
