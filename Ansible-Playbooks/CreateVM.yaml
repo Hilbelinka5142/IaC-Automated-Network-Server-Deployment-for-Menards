@@ -111,17 +111,35 @@
           - name: VLAN30 - host VMs
             dns_servers: 10.0.1.50
             type: dhcp
-        wait_for_ip_address: true
+        wait_for_ip_address: "{{ 'false' if os == 'Windows' else 'true' }}"
       delegate_to: localhost
       register: vm_creation_result
       ignore_errors: true
 
-    - name: Outputs IP address of VM to file
-      copy:
-        content: "{{ vm_creation_result.instance.ipv4 }}"
-        dest: "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/vmip.txt"
-      when: vm_creation_result is defined and vm_creation_result.instance is defined
+    - name: Wait for Windows VM to report an IP
+      community.vmware.vmware_guest_info:
+        hostname: "10.0.1.40"
+        username: "root"
+        password: "CNIT490sp25"
+        validate_certs: false
+        datacenter: "ha-datacenter"
+        name: "{{ vm_name }}"
+      register: vm_info_result
+      retries: 15
+      delay: 20
+      until: vm_info_result.instance.ip_address is defined and vm_info_result.instance.ip_address != ""
       delegate_to: localhost
+      when: os == 'Windows'
+
+    - name: Output IP address of VM to file
+      copy:
+        content: "{{ (vm_info_result.instance.ip_address if os == 'Windows' else vm_creation_result.instance.ipv4) }}"
+        dest: "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/vmip.txt"
+      when: >
+        (os == 'Windows' and vm_info_result.instance.ip_address is defined) or
+        (os != 'Windows' and vm_creation_result.instance.ipv4 is defined)
+      delegate_to: localhost
+
 
 
 # TESTING
