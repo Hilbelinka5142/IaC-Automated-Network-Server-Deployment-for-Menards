@@ -121,3 +121,34 @@ runcmd:
  - [eval, 'echo $(cat /proc/cmdline) "autoinstall" > /root/cmdline']
  - [eval, 'mount -n --bind -o ro /root/cmdline /proc/cmdline']
  - [eval, 'snap restart subiquity.subiquity-service']
+
+
+
+
+
+
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US
+  keyboard:
+    layout: us
+    variant: ""
+  timezone: America/Chicago
+  identity:
+    hostname: {{ vm_name }}
+    username: {{ username }}
+    password: "{{ password_hash }}"
+  ssh:
+    install-server: true
+    authorized-keys:
+      - "{{ ssh_key }}"
+  storage:
+    layout:
+      name: direct
+  packages:
+    - openssh-server
+  user-data:
+    disable_root: false
+  late-commands:
+    - echo '{{ username }} ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/{{ username }}
