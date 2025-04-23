@@ -9,8 +9,16 @@
     - name: Calculate duration (days) between now and expiration date
       set_fact:
         vm_lifetime_days: "{{ ((expiration | to_datetime('%Y-%m-%d')) - (ansible_date_time.date | to_datetime('%Y-%m-%d'))).days | default(1) }}"
-      
-    - name: Upload dynamic ISO to datastore
+    
+    # Remove any ISO duplicates
+    - name: Delete previous ISO for this VM (if any)
+      ansible.builtin.shell: >
+        vim-cmd vmsvc/getallvms | grep {{ vm_name }} || true
+      ignore_errors: true
+      when: os == "Ubuntu"
+    
+    # Upload Windows unattend ISO
+    - name: Upload Windows unattend ISO to datastore
       community.vmware.vsphere_copy:
         hostname: "10.0.1.40"
         username: "root"
@@ -20,7 +28,29 @@
         datacenter: "ha-datacenter"
         datastore: "VMs"
         path: "ISOs/{{ vm_name }}_unattend.iso"
+      when: os == "Windows"  
       delegate_to: localhost
+      
+    # Upload Ubuntu autoinstall ISO
+    - name: Upload Ubuntu autoinstall ISO to datastore
+      community.vmware.vsphere_copy:
+        hostname: "10.0.1.40"
+        username: "root"
+        password: "CNIT490sp25"
+        validate_certs: false
+        src: "/home/deploymentvm/ubuntu-iso-new/{{ vm_name }}_ubuntu.iso"
+        datacenter: "ha-datacenter"
+        datastore: "VMs"
+        path: "Ubuntu Files/{{ vm_name }}_ubuntu.iso"
+      when: os == "Ubuntu"
+      delegate_to: localhost
+      
+    - name: Set ISO paths based on OS
+      set_fact:
+        os_iso_path: >-
+          {{ '[VMs] ISOs/Win11_24H2_English_x64.iso' if os == 'Windows' else '[VMs] Ubuntu Files/' ~ vm_name ~ '_ubuntu.iso' }}
+        unattend_iso_path: >-
+          {{ '[VMs] ISOs/' ~ vm_name ~ '_unattend.iso' if os == 'Windows' else '' }}
 
     - name: Create cdrom list
       set_fact:
@@ -32,29 +62,30 @@
                 "unit_number": 0,
                 "state": "present",
                 "type": "iso",
-                "iso_path": '[VMs] ISOs/Win11_24H2_English_x64.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-20.04.6-autoinstall.iso'
-              },
-              {
-                "controller_number": 0,
-                "unit_number": 1,
-                "state": "present",
-                "type": "iso",
-                "iso_path": '[VMs] ISOs/{{ vm_name }}_unattend.iso' if os == 'Windows' else '[VMs] Ubuntu Files/ubuntu-20.04.6-autoinstall.iso'
+                "iso_path": os_iso_path
               }
             ]
             +
             (
               [
                 {
-                  "controller_type": "sata",
-                  "controller_number": 2,
-                  "unit_number": 0,
+                  "controller_number": 0,
+                  "unit_number": 1,
                   "state": "present",
                   "type": "iso",
-                  "iso_path": "[VMs] ISOs/windows.iso"
+                  "iso_path": unattend_iso_path
                 }
               ] if os == 'Windows' else []
             )
+            +
+            ([{
+              "controller_type": "sata",
+              "controller_number": 2,
+              "unit_number": 0,
+              "state": "present",
+              "type": "iso",
+              "iso_path": "[VMs] ISOs/windows.iso"
+            }] if os == 'Windows' else [])
           }}
 
     - name: Create VM based on form input
@@ -89,6 +120,7 @@
       copy:
         content: "{{ vm_creation_result.instance.ipv4 }}"
         dest: "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/vmip.txt"
+      when: vm_creation_result is defined and vm_creation_result.instance is defined
       delegate_to: localhost
 
 
