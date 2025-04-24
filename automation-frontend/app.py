@@ -3,14 +3,8 @@ import json
 import subprocess
 import random
 import string
-
 from flask import Flask, render_template, request
 from datetime import datetime
-
-import crypt
-from flask import Flask, render_template, request
-from datetime import datetime
-
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -38,10 +32,6 @@ def submit():
         storage = int(request.form.get('storage'))
         os_type = request.form.get('os')
         expiration = request.form.get('expiration')
-        reason = request.form.get('reason')
-
-        # Basic validation rules
-        if not all([requester_first_name, requester_last_name, vm_name, cpu, memory, storage, os_type, expiration, reason]):
         firewall_services_raw = request.form.get('firewall_services', '')
         firewall_services = [s.strip() for s in firewall_services_raw.split(',') if s.strip()]
         reason = request.form.get('reason')
@@ -68,17 +58,13 @@ def submit():
         password = generate_password()
 
 
-        password_hash = crypt.crypt(password, crypt.mksalt(crypt.METHOD_SHA512))
 
         data = {
             'requester_first_name': requester_first_name,
             'requester_last_name': requester_last_name,
-            'username': username,
-            'password': password,
             'email': email,
             'username': username,
             'password': password,
-            'password_hash': password_hash,
             'vm_name': vm_name,
             'cpu': cpu,
             'memory': memory,
