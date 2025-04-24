@@ -21,8 +21,6 @@ ansibel_winrm_transport=basic
 ansible_winrm_server_cert_validation=ignore
 ansible_python_interpreter=/bin/python
 
-[test]
-10.0.3.12
+[VM]
 [test:vars]
-ansible_user=test
 ansible_python_interpreter=/usr/bin/python3

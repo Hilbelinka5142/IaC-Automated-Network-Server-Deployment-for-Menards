@@ -1,6 +1,6 @@
 ---
 - name: Installing Apache and deploying custom HTML file
-  hosts: test #TODO need to get the IP address of the host that is being deployed.  it can be passed from the python script that is already getting that?
+  hosts: VM #TODO need to get the IP address of the host that is being deployed.  it can be passed from the python script that is already getting that?
   become: yes
   tasks:
 
