@@ -9,7 +9,7 @@ from pathlib import Path
 
 # Path to key directories
 base_dir = os.path.dirname(__file__)
-ansible_dir = os.path.expanduser("~/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks")
+ansible_dir = os.path.expanduser("/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks")
 firewall_dir = os.path.expanduser("/home/deploymentvm/Desktop/Ansible/Firewall")
 frontend_dir = os.path.expanduser("/home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend")
 playbooks = {
@@ -87,9 +87,6 @@ def checkServerStatus(ipAddress, vars_file_path):
         return False
 
 # Gets custom inputs and creates unattend.iso file for Windows machine
-
-
-
 # Windows: Generate unattend.iso
 def generate_autounattend_iso(xml_template_path, yaml_input_path, output_iso_path):
     with open(yaml_input_path, "r") as f:
@@ -174,7 +171,20 @@ def createVM():
     while not checkServerStatus(vmIP, vars_file):
         print("Waiting for VM to come online...")
         time.sleep(30)
-    
+
+    # Dynamically create temporary inventory file with VM IP
+    dynamic_inventory = f"[VM]\n{vmIP}\n"
+    temp_inventory_path = "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/dynamic_inventory.ini"
+    with open(temp_inventory_path, 'w') as f:
+        f.write(dynamic_inventory)
+
+    # Run the Apache deployment playbook with the dynamic IP
+    apache_playbook_path = os.path.join(ansible_dir, 'Apache.yaml')
+    print("Running Apache deployment playbook...")
+    if not runPlaybook(apache_playbook_path, temp_inventory_path):
+        print("Failed to deploy Apache to the VM.")
+        return
+
     print(f"Your VM was successfully created with the IP address of: {vmIP}")
 
 createVM()
