@@ -3,10 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <title>VM Request Form</title>
+<<<<<<< HEAD
+=======
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            padding: 40px;
+            margin: 0;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button[type="submit"],
+        button[type="button"] {
+            padding: 10px 20px;
+            font-size: 15px;
+            background-color: #007BFF;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button[type="button"] {
+            background-color: #6c757d;
+            margin-left: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #selected-services {
+            margin-bottom: 20px;
+        }
+
+        #selected-services span {
+            padding: 6px 10px;
+            margin: 5px 5px 0 0;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            background-color: #e7f1ff;
+            display: inline-block;
+            font-size: 13px;
+            color: #0056b3;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #selected-services span:hover {
+            background-color: #cce0ff;
+        }
+
+        @media (max-width: 640px) {
+            form {
+                padding: 20px;
+            }
+
+            button {
+                width: 100%;
+                margin: 10px 0;
+            }
+
+            button[type="button"] {
+                margin-left: 0;
+            }
+        }
+    </style>
+>>>>>>> f92015690ceb765157fd539cbae5f24da506d938
 </head>
 <body>
     <h2>Request a Virtual Machine</h2>
     <form action="/submit" method="post">
+<<<<<<< HEAD
         <label>Requester First Name:</label><br>
         <input type="text" name="requester_first_name" placeholder="Your first name" required><br><br>
         
@@ -39,5 +149,92 @@
 
         <button type="submit">Submit</button>
     </form>
+=======
+        <label>Requester First Name:</label>
+        <input type="text" name="requester_first_name" placeholder="Your first name" required>
+
+        <label>Requester Last Name:</label>
+        <input type="text" name="requester_last_name" placeholder="Your last name" required>
+
+        <label>Email Address:</label>
+        <input type="email" name="email" placeholder="you@example.com" required>
+
+        <label>VM Name:</label>
+        <input type="text" name="vm_name" placeholder="Unique VM identifier" required>
+
+        <label>CPU Cores:</label>
+        <input type="number" name="cpu" min="2" max="16" placeholder="e.g., 4" required>
+
+        <label>RAM (GB):</label>
+        <input type="number" name="memory" min="4" max="64" placeholder="e.g., 8" required>
+
+        <label>Disk Size (GB):</label>
+        <input type="number" name="storage" min="64" max="500" placeholder="e.g., 100" required>
+
+        <label>OS Type:</label>
+        <select name="os">
+            <option value="Ubuntu">Ubuntu</option>
+            <option value="Windows">Windows</option>
+        </select>
+
+        <label>Expiration Date:</label>
+        <input type="date" name="expiration" max="2026-03-25">
+
+        <label>Firewall Services:</label>
+        <div style="display: flex; align-items: center;">
+            <select id="service-selector">
+                <option value="SSH">SSH</option>
+                <option value="RDP">RDP</option>
+                <option value="SNMP">SNMP</option>
+                <option value="PING">PING</option>
+                <option value="HTTP">HTTP</option>
+                <option value="HTTPS">HTTPS</option>
+            </select>
+            <button type="button" onclick="addService()">Add</button>
+        </div>
+
+        <div id="selected-services"></div>
+        <input type="hidden" name="firewall_services" id="firewall_services">
+
+        <label>Reason for Request:</label>
+        <textarea name="reason" rows="4" cols="40" placeholder="Briefly describe your use case..." required></textarea>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        const selectedServices = new Set();
+
+        function addService() {
+            const selector = document.getElementById("service-selector");
+            const selected = selector.value;
+
+            if (!selectedServices.has(selected)) {
+                selectedServices.add(selected);
+                updateDisplay();
+            }
+        }
+
+        function removeService(service) {
+            selectedServices.delete(service);
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const displayDiv = document.getElementById("selected-services");
+            const hiddenInput = document.getElementById("firewall_services");
+            displayDiv.innerHTML = "";
+
+            selectedServices.forEach(service => {
+                const tag = document.createElement("span");
+                tag.textContent = service + " ✕";
+                tag.onclick = () => removeService(service);
+                displayDiv.appendChild(tag);
+            });
+
+            hiddenInput.value = Array.from(selectedServices).join(",");
+        }
+    </script>
+>>>>>>> f92015690ceb765157fd539cbae5f24da506d938
 </body>
 </html>

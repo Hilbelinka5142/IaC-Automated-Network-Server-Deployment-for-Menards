@@ -1,4 +1,5 @@
 cpu: 2
+<<<<<<< HEAD
 expiration: '2025-04-18'
 memory: 4
 os: Windows
@@ -9,3 +10,20 @@ requester_last_name: h
 storage: 64
 username: ah
 vm_name: Testwinauto
+=======
+email: andersena0270@my.uwstout.edu
+expiration: '2025-04-24'
+firewall_services:
+- SSH
+- RDP
+memory: 8
+os: Ubuntu
+password: 6QAuOEbyzkC3udWA
+password_hash: $6$J.9CBJKe3yYAKCfz$CCzx9nZTSjzwzS5TyPw/RtnUPvVOtVCqaZLFfb83KOnWd2B/AQE83ILCKk9GrC73cUJsnwCdcUoZV9/c101.K.
+reason: I need it because i do
+requester_first_name: Ally
+requester_last_name: Andersen
+storage: 100
+username: aandersen
+vm_name: 'Test Live '
+>>>>>>> f92015690ceb765157fd539cbae5f24da506d938

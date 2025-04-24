@@ -3,9 +3,17 @@ import json
 import subprocess
 import random
 import string
+<<<<<<< HEAD
 from flask import Flask, render_template, request
 from datetime import datetime
 
+=======
+import crypt
+from flask import Flask, render_template, request
+from datetime import datetime
+
+
+>>>>>>> f92015690ceb765157fd539cbae5f24da506d938
 # Initialize the Flask app
 app = Flask(__name__)
 
@@ -25,16 +33,29 @@ def submit():
     try:
         requester_first_name = request.form.get('requester_first_name')
         requester_last_name = request.form.get('requester_last_name')
+<<<<<<< HEAD
+=======
+        email = request.form.get('email')
+>>>>>>> f92015690ceb765157fd539cbae5f24da506d938
         vm_name = request.form.get('vm_name')
         cpu = int(request.form.get('cpu'))
         memory = int(request.form.get('memory'))
         storage = int(request.form.get('storage'))
         os_type = request.form.get('os')
         expiration = request.form.get('expiration')
+<<<<<<< HEAD
         reason = request.form.get('reason')
 
         # Basic validation rules
         if not all([requester_first_name, requester_last_name, vm_name, cpu, memory, storage, os_type, expiration, reason]):
+=======
+        firewall_services_raw = request.form.get('firewall_services', '')
+        firewall_services = [s.strip() for s in firewall_services_raw.split(',') if s.strip()]
+        reason = request.form.get('reason')
+
+        # Basic validation rules
+        if not all([requester_first_name, requester_last_name, email, vm_name, cpu, memory, storage, os_type, expiration, firewall_services, reason]):
+>>>>>>> f92015690ceb765157fd539cbae5f24da506d938
             return "All fields are required.", 400
 
         if not (2 <= cpu <= 16):
@@ -54,19 +75,34 @@ def submit():
         
         password = generate_password()
 
+<<<<<<< HEAD
 
+=======
+        password_hash = crypt.crypt(password, crypt.mksalt(crypt.METHOD_SHA512))
+>>>>>>> f92015690ceb765157fd539cbae5f24da506d938
 
         data = {
             'requester_first_name': requester_first_name,
             'requester_last_name': requester_last_name,
+<<<<<<< HEAD
             'username': username,
             'password': password,
+=======
+            'email': email,
+            'username': username,
+            'password': password,
+            'password_hash': password_hash,
+>>>>>>> f92015690ceb765157fd539cbae5f24da506d938
             'vm_name': vm_name,
             'cpu': cpu,
             'memory': memory,
             'storage': storage,
             'os': os_type,
             'expiration': expiration,
+<<<<<<< HEAD
+=======
+            'firewall_services': firewall_services,
+>>>>>>> f92015690ceb765157fd539cbae5f24da506d938
             'reason': reason
         }
 
@@ -87,7 +123,11 @@ def submit():
         subprocess.Popen(['python3', 'preview_requests.py'])
 
         # Return a basic success message to the user
+<<<<<<< HEAD
         return "Request submitted and saved successfully!"
+=======
+        return "Request submitted and saved successfully!<br>Your VM credentials will be emailed to you once completed!"
+>>>>>>> f92015690ceb765157fd539cbae5f24da506d938
     
     except Exception as e:
         print(f"Error processing form: {e}")

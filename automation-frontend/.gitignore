@@ -1,1 +1,5 @@
 requests/*.json
+<<<<<<< HEAD
+=======
+vars.yaml
+>>>>>>> f92015690ceb765157fd539cbae5f24da506d938
