@@ -22,14 +22,19 @@ def get_latest_json_file():
 
 
 def load_config():
-    """Load configuration from the latest JSON file format."""
+    """Load configuration from the latest JSON file and external IP source."""
     try:
+        # Load IP from external file
+        ip_file_path = "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/vmip.txt"
+        with open(ip_file_path, "r") as ip_file:
+            src_ip = ip_file.read().strip()  # Remove any newlines or spaces
+
         config_file = get_latest_json_file()
         print(f"Loading configuration from: {config_file}")
         with open(config_file, "r") as file:
             full_data = json.load(file)
             return {
-                "src_addr": "10.0.3.11",  # Static for now
+                "src_addr": src_ip,
                 "expiration": full_data.get("expiration").replace("-", "/"),
                 "services": full_data.get("firewall_services", [])
             }
@@ -134,10 +139,6 @@ if __name__ == "__main__":
     # Load config from JSON file
     config = load_config()
 
-    # Check if JSON config was loaded successfully
-    if config:
-        # Configure the firewall using the parsed arguments and JSON configuration
-        configure_fortinet_firewall(config, args.host, args.user, args.password)
     # Check if JSON config was loaded successfully
     if config:
         # Configure the firewall using the parsed arguments and JSON configuration
