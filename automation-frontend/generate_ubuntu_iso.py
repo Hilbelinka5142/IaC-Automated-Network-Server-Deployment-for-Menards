@@ -65,7 +65,7 @@ def build_iso(vm_name):
 
     subprocess.run([
         "xorriso", "-as", "mkisofs",
-        "-r", "-V", "Ubuntu Autoinstall",
+        "-r", "-V", "cidata",
         "-o", output_iso,
         "-J", "-joliet-long", "-l", "-cache-inodes",
         "-isohybrid-mbr", "/usr/lib/ISOLINUX/isohdpfx.bin",

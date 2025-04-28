@@ -1,29 +1,15 @@
 cpu: 2
-<<<<<<< HEAD
-expiration: '2025-04-18'
-memory: 4
-os: Windows
-password: lJ5c8Z3YTRPpIlwD
-reason: testing windows autoinstall
-requester_first_name: a
-requester_last_name: h
-storage: 64
-username: ah
-vm_name: Testwinauto
-=======
-email: andersena0270@my.uwstout.edu
-expiration: '2025-04-24'
+email: leel7284@my.uwstout.edu
+expiration: '2025-04-28'
 firewall_services:
 - SSH
-- RDP
-memory: 8
+memory: 4
 os: Ubuntu
-password: 6QAuOEbyzkC3udWA
-password_hash: $6$J.9CBJKe3yYAKCfz$CCzx9nZTSjzwzS5TyPw/RtnUPvVOtVCqaZLFfb83KOnWd2B/AQE83ILCKk9GrC73cUJsnwCdcUoZV9/c101.K.
-reason: I need it because i do
-requester_first_name: Ally
-requester_last_name: Andersen
-storage: 100
-username: aandersen
-vm_name: 'Test Live '
->>>>>>> f92015690ceb765157fd539cbae5f24da506d938
+password: sD5BFMAl8k6CT8MM
+password_hash: $6$AzPpsjg9hX/ezxYS$IzrUy4QJ7gQTC.JQ9Sh37hj86Lr1uM24enaFpO2nE57lOTEkiE59n6RWlVQw7WhvNZsQDQkbAjgix0TSR7PEl/
+reason: Test2
+requester_first_name: Luke
+requester_last_name: Lee
+storage: 64
+username: llee
+vm_name: Dog2
