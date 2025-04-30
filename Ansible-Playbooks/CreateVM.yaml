@@ -125,8 +125,8 @@
         datacenter: "ha-datacenter"
         name: "{{ vm_name }}"
       register: vm_info_result
-      retries: 40
-      delay: 45
+      retries: 35
+      delay: 90
       until: vm_info_result.instance.ip_address is defined and vm_info_result.instance.ip_address != ""
       delegate_to: localhost
       when: os == 'Windows'
