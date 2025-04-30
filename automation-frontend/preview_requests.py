@@ -173,7 +173,16 @@ def createVM():
         time.sleep(30)
 
     # Dynamically create temporary inventory file with VM IP
-    dynamic_inventory = f"[VM]\n{vmIP}\n"
+    with open(vars_file, 'r') as f:
+        vars_data = yaml.safe_load(f)
+
+    ssh_user = vars_data.get("username", "ubuntu")  # Fallback to 'ubuntu' if not specified
+    ssh_key_path = "/home/deploymentvm/.ssh/ansible"  # Update if needed
+
+    dynamic_inventory = f"""[VM]
+    {vmIP} ansible_user={ssh_user} ansible_ssh_private_key_file={ssh_key_path}
+    """
+
     temp_inventory_path = "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/dynamic_inventory.ini"
     with open(temp_inventory_path, 'w') as f:
         f.write(dynamic_inventory)

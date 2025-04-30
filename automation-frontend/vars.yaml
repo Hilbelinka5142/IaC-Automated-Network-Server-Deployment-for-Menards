@@ -1,19 +1,4 @@
 cpu: 2
-<<<<<<< HEAD
-email: Hilbelinka5142@my.uwstout.edu
-expiration: '2025-04-23'
-firewall_services:
-- SSH
-memory: 4
-os: Windows
-password: X0D6aRs6i7flOk1S
-reason: testing unattened
-requester_first_name: Alex
-requester_last_name: Hilbelink
-storage: 64
-username: ahilbelink
-vm_name: Test10
-=======
 email: leel7284@my.uwstout.edu
 expiration: '2025-04-28'
 firewall_services:
@@ -28,4 +13,3 @@ requester_last_name: Lee
 storage: 64
 username: llee
 vm_name: Dog2
->>>>>>> 21f90570b073eec0ab61e988aa713e604cf45754
