@@ -1,23 +1,26 @@
 ---
 - name: Installing Apache and deploying custom HTML file
-  hosts: VM #TODO need to get the IP address of the host that is being deployed.  it can be passed from the python script that is already getting that?
+  hosts: VM
   become: yes
   tasks:
 
-    - name: Update apt package cache
-      shell: apt update -y && apt upgrade -y
+    - name: Update apt package cache and upgrade packages
+      apt:
+        update_cache: yes
+        upgrade: dist
 
-    - name: install Apache
-      command: apt install apache2 -y
+    - name: Install Apache
+      apt:
+        name: apache2
+        state: present
 
     - name: Copy custom HTML file to Apache web directory
       copy:
-        src: /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/index.html  # Path to the fetched file
-        dest: /var/www/html/index.html  # Destination path on the remote server
+        src: /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/index.html
+        dest: /var/www/html/index.html
 
-    - name: Ensure that Apache is running
+    - name: Ensure that Apache is running and enabled
       service:
         name: apache2
         state: started
         enabled: yes
-
