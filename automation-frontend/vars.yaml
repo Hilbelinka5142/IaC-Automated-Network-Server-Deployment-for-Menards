@@ -1,4 +1,5 @@
 cpu: 2
+<<<<<<< HEAD
 email: Hilbelinka5142@my.uwstout.edu
 expiration: '2025-04-23'
 firewall_services:
@@ -12,3 +13,19 @@ requester_last_name: Hilbelink
 storage: 64
 username: ahilbelink
 vm_name: Test10
+=======
+email: leel7284@my.uwstout.edu
+expiration: '2025-04-28'
+firewall_services:
+- SSH
+memory: 4
+os: Ubuntu
+password: sD5BFMAl8k6CT8MM
+password_hash: $6$AzPpsjg9hX/ezxYS$IzrUy4QJ7gQTC.JQ9Sh37hj86Lr1uM24enaFpO2nE57lOTEkiE59n6RWlVQw7WhvNZsQDQkbAjgix0TSR7PEl/
+reason: Test2
+requester_first_name: Luke
+requester_last_name: Lee
+storage: 64
+username: llee
+vm_name: Dog2
+>>>>>>> 21f90570b073eec0ab61e988aa713e604cf45754

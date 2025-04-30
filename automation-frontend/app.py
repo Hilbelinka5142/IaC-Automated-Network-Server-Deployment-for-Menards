@@ -3,6 +3,7 @@ import json
 import subprocess
 import random
 import string
+import crypt
 from flask import Flask, render_template, request
 from datetime import datetime
 
@@ -49,22 +50,42 @@ def submit():
         if not (64 <= storage <= 500):
             return "Storage must be between 64 and 500 GB.", 400
         
+        # Check for duplicate VM name from existing requests folder
+        # If any duplicates exist, it immediately stops and returns an error back to the user
+        for filename in os.listdir(REQUESTS_DIR):
+            if filename.endswith('.json'):
+                filepath = os.path.join(REQUESTS_DIR, filename)
+                with open(filepath, 'r') as f:
+                    existing_data = json.load(f)
+                    if existing_data.get('vm_name') == vm_name:
+                        return f"A VM with the name '{vm_name}' already exists. Please choose a different name.", 400
+
+        
+        # Creates a username based off requester's first initial and full last name
         username = (requester_first_name[0] + requester_last_name).lower()
 
+        # Generates a random password for the user
         def generate_password(length=16):
             characters = string.ascii_letters + string.digits
             return ''.join(random.choices(characters, k=length))
         
         password = generate_password()
+        
+        # Hashes the generated password for secure Ubuntu server login
+        password_hash = crypt.crypt(password, crypt.mksalt(crypt.METHOD_SHA512))
 
-
-
+        
+        # Create a dictionary containing all user-submitted form data
+        # along with the generated password and password hash.
+        # This dictionary will later be saved as a JSON file to be used 
+        # by backend automation scripts and dynamic ISO generation.
         data = {
             'requester_first_name': requester_first_name,
             'requester_last_name': requester_last_name,
             'email': email,
             'username': username,
-            'password': password,
+            'password': password,                 # Plaintext password for email notification
+            'password_hash': password_hash,       # Hashed password for secure Ubuntu server login
             'vm_name': vm_name,
             'cpu': cpu,
             'memory': memory,
