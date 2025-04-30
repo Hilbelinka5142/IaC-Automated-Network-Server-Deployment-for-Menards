@@ -172,27 +172,29 @@ def createVM():
         print("Waiting for VM to come online...")
         time.sleep(30)
 
-    # Dynamically create temporary inventory file with VM IP
-    with open(vars_file, 'r') as f:
-        vars_data = yaml.safe_load(f)
+    # Run the Apache deployment playbook with the dynamic IP **only if OS is Ubuntu**
+    if selected_os == "ubuntu":
+        with open(vars_file, 'r') as f:
+            vars_data = yaml.safe_load(f)
 
-    ssh_user = vars_data.get("username", "ubuntu")  # Fallback to 'ubuntu' if not specified
-    ssh_key_path = "/home/deploymentvm/.ssh/ansible"  # Update if needed
+        ssh_user = vars_data.get("username", "ubuntu")  # Fallback to 'ubuntu' if not specified
+        ssh_key_path = "/home/deploymentvm/.ssh/ansible"  # Update if needed
 
-    dynamic_inventory = f"""[VM]
-    {vmIP} ansible_user={ssh_user} ansible_ssh_private_key_file={ssh_key_path}
-    """
+        dynamic_inventory = f"""[VM]
+{vmIP} ansible_user={ssh_user} ansible_ssh_private_key_file={ssh_key_path}
+"""
 
-    temp_inventory_path = "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/dynamic_inventory.ini"
-    with open(temp_inventory_path, 'w') as f:
-        f.write(dynamic_inventory)
+        temp_inventory_path = "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/dynamic_inventory.ini"
+        with open(temp_inventory_path, 'w') as f:
+            f.write(dynamic_inventory)
 
-    # Run the Apache deployment playbook with the dynamic IP
-    apache_playbook_path = os.path.join(ansible_dir, 'Apache.yaml')
-    print("Running Apache deployment playbook...")
-    if not runPlaybook(apache_playbook_path, temp_inventory_path):
-        print("Failed to deploy Apache to the VM.")
-        return
+        apache_playbook_path = os.path.join(ansible_dir, 'Apache.yaml')
+        print("Running Apache deployment playbook...")
+        if not runPlaybook(apache_playbook_path, temp_inventory_path):
+            print("Failed to deploy Apache to the VM.")
+            return
+    else:
+        print("Skipping Apache deployment since OS is not Ubuntu.")
 
     print(f"Your VM was successfully created with the IP address of: {vmIP}")
 
