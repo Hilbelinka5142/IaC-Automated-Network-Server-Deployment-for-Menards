@@ -133,21 +133,6 @@ def createVM():
 
 
     # Run webserver playbook
-
-    # Get the IP of the new VM
-    ip_file_path = os.path.join(ansible_dir, '/tmp/vmip.txt')
-    vmIP = ""
-    maxRetries = 60
-    retries = 0
-
-    #creates unattend ISO 
-    generate_autounattend_iso(
-        os.path.join(ansible_dir, 'autounattendTEMPLATE.xml'), 
-        os.path.join(frontend_dir, 'vars.yaml'),
-        os.path.join(ansible_dir, 'unattend.iso')
-    )
-
-    #runs the webserver playbook
     if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
         return
         
@@ -203,4 +188,3 @@ def createVM():
     print(f"Your VM was successfully created with the IP address of: {vmIP}")
 
 createVM()
-
