@@ -145,7 +145,7 @@ def createVM():
             if vmIP:
                 break
         print("Waiting for VM IP to be written...")
-        time.sleep(30)
+        time.sleep(90)
 
     if not vmIP:
         print("Failed to retrieve VM IP after waiting.")
