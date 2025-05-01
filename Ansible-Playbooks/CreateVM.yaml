@@ -116,7 +116,7 @@
       register: vm_creation_result
       ignore_errors: true
 
-    - name: Wait for Windows VM to report an IP
+    - name: Get guest info for the VM
       community.vmware.vmware_guest_info:
         hostname: "10.0.1.40"
         username: "root"
@@ -125,19 +125,14 @@
         datacenter: "ha-datacenter"
         name: "{{ vm_name }}"
       register: vm_info_result
-      retries: 35
-      delay: 90
-      until: vm_info_result.instance.ip_address is defined and vm_info_result.instance.ip_address != ""
-      delegate_to: localhost
-      when: os == 'Windows'
+      retries: 15
+      delay: 30
+      until: vm_info_result.instance.ipv4 is defined and vm_info_result.instance.ipv4 != ""
 
     - name: Output IP address of VM to file
       copy:
-        content: "{{ (vm_info_result.instance.ip_address if os == 'Windows' else vm_creation_result.instance.ipv4) }}"
+        content: "{{ vm_info_result.instance.ipv4 }}"
         dest: "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/vmip.txt"
-      when: >
-        (os == 'Windows' and vm_info_result.instance.ip_address is defined) or
-        (os != 'Windows' and vm_creation_result.instance.ipv4 is defined)
       delegate_to: localhost
 
 
