@@ -11,13 +11,15 @@
         password: "CNIT490sp25"
         validate_certs: false
         datacenter: "ha-datacenter"
-        name: "PremadeWindowsDemo"
+        name: "DELETEME10"
       register: vm_info_result
       retries: 15
       delay: 30
       until: vm_info_result.instance.ipv4 is defined and vm_info_result.instance.ipv4 != ""
+      delegate_to: localhost
 
     - name: Output IP address of VM to file
       copy:
         content: "{{ vm_info_result.instance.ipv4 }}"
         dest: "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/vmip.txt"
+      delegate_to: localhost
