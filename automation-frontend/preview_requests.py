@@ -123,7 +123,14 @@ def createVM():
     if not runPlaybook(playbooks["webserver"][2], playbooks["inventory"]["webserver"]):
         return
 
-    vmIP = ip_file_path
+    # Read the IP from the file
+    try:
+        with open(ip_file_path, 'r') as f:
+            vmIP = f.read().strip()
+    except Exception as e:
+        print(f"Failed to read VM IP: {e}")
+        return
+    
     print(f"VM IP retrieved: {vmIP}")
     
     # Run firewall playbook    
