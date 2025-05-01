@@ -112,7 +112,7 @@ def createVM():
         
     ip_file_path = os.path.join(ansible_dir, 'tmp/vmip.txt')
     vmIP = ""
-    for _ in range(60):
+    """for _ in range(60):
         if os.path.exists(ip_file_path):
             with open(ip_file_path, 'r') as f:
                 vmIP = f.read().strip()
@@ -123,7 +123,7 @@ def createVM():
 
     if not vmIP:
         print("Failed to retrieve VM IP after waiting.")
-        return
+        return"""
 
     print(f"VM IP retrieved: {vmIP}")
     
