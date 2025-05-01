@@ -115,27 +115,15 @@ def createVM():
     ip_file_path = os.path.join(ansible_dir, 'tmp/vmip.txt')
     vmIP = ""
     max_wait_time = 2100  # in seconds
-    check_interval = 30   # check every 30 seconds
-    elapsed = 0
 
     print("Waiting for VM IP to be written to vmip.txt...")
-
-    while elapsed < max_wait_time:
-        if os.path.exists(ip_file_path):
-            with open(ip_file_path, 'r') as f:
-                vmIP = f.read().strip()
-            if vmIP:
-                print(f"IP address retrieved: {vmIP}")
-                break
-        time.sleep(check_interval)
-        elapsed += check_interval
-    else:
-        print("Timed out waiting for vmip.txt. VM may not have booted or reported IP.")
-
+    time.sleep(max_wait_time)
+    
     # Run get vm ip playbook
     if not runPlaybook(playbooks["webserver"][2], playbooks["inventory"]["webserver"]):
         return
 
+    vmIP = ip_file_path
     print(f"VM IP retrieved: {vmIP}")
     
     # Run firewall playbook    
