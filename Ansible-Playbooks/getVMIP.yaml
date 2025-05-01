@@ -2,6 +2,8 @@
 - name: Wait for Windows VM to report an IP and write it to a file
   hosts: localhost
   gather_facts: no
+  vars_files:
+    - /home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml
 
   tasks:
     - name: Get guest info for the VM
@@ -11,7 +13,7 @@
         password: "CNIT490sp25"
         validate_certs: false
         datacenter: "ha-datacenter"
-        name: "DELETEME10"
+        name: "{{ vm_name }}"
       register: vm_info_result
       retries: 15
       delay: 30
