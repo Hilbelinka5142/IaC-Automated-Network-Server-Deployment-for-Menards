@@ -128,6 +128,7 @@
       retries: 15
       delay: 30
       until: vm_info_result.instance.ipv4 is defined and vm_info_result.instance.ipv4 != ""
+      delegate_to: localhost
 
     - name: Output IP address of VM to file
       copy:

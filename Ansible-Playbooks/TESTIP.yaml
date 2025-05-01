@@ -1,0 +1,23 @@
+---
+- name: Wait for Windows VM to report an IP and write it to a file
+  hosts: localhost
+  gather_facts: no
+
+  tasks:
+    - name: Get guest info for the VM
+      community.vmware.vmware_guest_info:
+        hostname: "10.0.1.40"
+        username: "root"
+        password: "CNIT490sp25"
+        validate_certs: false
+        datacenter: "ha-datacenter"
+        name: "PremadeWindowsDemo"
+      register: vm_info_result
+      retries: 15
+      delay: 30
+      until: vm_info_result.instance.ipv4 is defined and vm_info_result.instance.ipv4 != ""
+
+    - name: Output IP address of VM to file
+      copy:
+        content: "{{ vm_info_result.instance.ipv4 }}"
+        dest: "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/vmip.txt"
