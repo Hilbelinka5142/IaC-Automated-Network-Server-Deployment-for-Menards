@@ -61,31 +61,6 @@ def runPlaybook(playbook, inventoryPath):
         return False
     return True
 
-
-# Function to ping VM by OS
-def checkServerStatus(ipAddress, vars_file_path):
-    try:
-        with open(vars_file_path, 'r') as f:
-            vars_data = yaml.safe_load(f)
-            selected_os = vars_data.get("os", "").lower()
-    except Exception as e:
-        print(f"Error loading OS from vars.yaml: {e}")
-        return False
-
-    ping_command = ["ping", "-c", "4", ipAddress] if selected_os in ["linux", "ubuntu"] else ["ping", "-n", "4", ipAddress] if selected_os == "windows" else None
-    if not ping_command:
-        print(f"Unsupported OS selected in vars.yaml: {selected_os}")
-        return False
-
-    try:
-        subprocess.run(ping_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        print(f"Server at {ipAddress} is up!")
-        return True
-        
-    except subprocess.CalledProcessError:
-        print(f"Server at {ipAddress} is not reachable.")
-        return False
-
 # Gets custom inputs and creates unattend.iso file for Windows machine
 # Windows: Generate unattend.iso
 def generate_autounattend_iso(xml_template_path, yaml_input_path, output_iso_path):
@@ -131,7 +106,6 @@ def createVM():
         print(f"Unsupported OS for ISO generation: {selected_os}")
         return
 
-
     # Run webserver playbook
     if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
         return
@@ -152,9 +126,6 @@ def createVM():
         return
 
     print(f"VM IP retrieved: {vmIP}")
-    while not checkServerStatus(vmIP, vars_file):
-        print("Waiting for VM to come online...")
-        time.sleep(30)
     
     # Run firewall playbook    
     if not runPlaybook(playbooks["firewall"][0], playbooks["inventory"]["firewall"]):
