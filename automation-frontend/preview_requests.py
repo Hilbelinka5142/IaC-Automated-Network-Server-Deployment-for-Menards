@@ -15,7 +15,8 @@ frontend_dir = os.path.expanduser("/home/deploymentvm/Desktop/Automation_fronten
 playbooks = {
     'webserver': [
         os.path.join(ansible_dir, 'CreateVM.yaml'), 
-        os.path.join(ansible_dir, 'CreateDNS.yaml')
+        os.path.join(ansible_dir, 'CreateDNS.yaml'),
+        os.path.join(ansible_dir, 'getVMIP.yaml')
         ],
     'request': [os.path.join(base_dir, 'requests')],
     'firewall': [os.path.join(firewall_dir, 'fortinet_policy_change.yaml')],
@@ -109,21 +110,32 @@ def createVM():
     # Run webserver playbook
     if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
         return
-        
+    
+    # Wait up to 2100 seconds (35 minutes) for the VM IP file
     ip_file_path = os.path.join(ansible_dir, 'tmp/vmip.txt')
     vmIP = ""
-    """for _ in range(60):
+    max_wait_time = 2100  # in seconds
+    check_interval = 30   # check every 30 seconds
+    elapsed = 0
+
+    print("Waiting for VM IP to be written to vmip.txt...")
+
+    while elapsed < max_wait_time:
         if os.path.exists(ip_file_path):
             with open(ip_file_path, 'r') as f:
                 vmIP = f.read().strip()
             if vmIP:
+                print(f"IP address retrieved: {vmIP}")
                 break
-        print("Waiting for VM IP to be written...")
-        time.sleep(90)
+        time.sleep(check_interval)
+        elapsed += check_interval
+    else:
+        print("Timed out waiting for vmip.txt. VM may not have booted or reported IP.")
+        return
 
-    if not vmIP:
-        print("Failed to retrieve VM IP after waiting.")
-        return"""
+    # Run get vm ip playbook
+    if not runPlaybook(playbooks["webserver"][2], playbooks["inventory"]["webserver"]):
+        return
 
     print(f"VM IP retrieved: {vmIP}")
     
