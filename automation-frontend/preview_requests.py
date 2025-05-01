@@ -136,22 +136,6 @@ def createVM():
     if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
         return
         
-    # Run firewall playbook    
-    if not runPlaybook(playbooks["firewall"][0], playbooks["inventory"]["firewall"]):
-        return
-        
-    # Runs DNS playbook (disabled)
-    # if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]): #TODO: need to make sure playbook collects correct VM data once it boots
-    #     return #stops if playbook fails
-
-
-    # Finally, send the credentials via email
-    if not runPlaybook(playbooks["email"][0], playbooks["inventory"]["firewall"]):
-        print("WARNING: Failed to send email with credentials.")
-    else:
-        print("Credentials have been emailed to the user.")
-        
-
     ip_file_path = os.path.join(ansible_dir, 'tmp/vmip.txt')
     vmIP = ""
     for _ in range(60):
@@ -171,6 +155,21 @@ def createVM():
     while not checkServerStatus(vmIP, vars_file):
         print("Waiting for VM to come online...")
         time.sleep(30)
+    
+    # Run firewall playbook    
+    if not runPlaybook(playbooks["firewall"][0], playbooks["inventory"]["firewall"]):
+        return
+        
+    # Runs DNS playbook (disabled)
+    # if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]): #TODO: need to make sure playbook collects correct VM data once it boots
+    #     return #stops if playbook fails
+
+
+    # Finally, send the credentials via email
+    if not runPlaybook(playbooks["email"][0], playbooks["inventory"]["firewall"]):
+        print("WARNING: Failed to send email with credentials.")
+    else:
+        print("Credentials have been emailed to the user.")
 
     # Run the Apache deployment playbook with the dynamic IP **only if OS is Ubuntu**
     if selected_os == "ubuntu":
