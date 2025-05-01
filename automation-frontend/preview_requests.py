@@ -131,7 +131,6 @@ def createVM():
         elapsed += check_interval
     else:
         print("Timed out waiting for vmip.txt. VM may not have booted or reported IP.")
-        return
 
     # Run get vm ip playbook
     if not runPlaybook(playbooks["webserver"][2], playbooks["inventory"]["webserver"]):
