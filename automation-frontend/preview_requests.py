@@ -10,8 +10,8 @@ from pathlib import Path
 # Path to key directories
 base_dir = os.path.dirname(__file__)
 ansible_dir = os.path.expanduser("/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks")
-firewall_dir = os.path.expanduser("/home/deploymentvm/Desktop/Ansible/Firewall")
-frontend_dir = os.path.expanduser("/home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend")
+firewall_dir = os.path.expanduser("/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Firewall")
+frontend_dir = os.path.expanduser("/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend")
 playbooks = {
     'webserver': [
         os.path.join(ansible_dir, 'CreateVM.yaml'), 

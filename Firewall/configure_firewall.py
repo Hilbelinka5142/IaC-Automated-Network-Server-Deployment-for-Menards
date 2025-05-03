@@ -5,7 +5,7 @@ from datetime import datetime
 from netmiko import ConnectHandler
 
 # Directory where all request JSONs are stored
-REQUESTS_DIR = "/home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/requests"
+REQUESTS_DIR = "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/requests"
 
 def get_latest_json_file():
     """Return the most recent JSON request file based on timestamp in filename."""

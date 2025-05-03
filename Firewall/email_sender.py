@@ -4,7 +4,7 @@ import smtplib
 from email.message import EmailMessage
 
 # Directory containing request files
-REQUESTS_DIR ="/home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/requests"
+REQUESTS_DIR ="/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/requests"
 
 def get_latest_json_file():
     files = [f for f in os.listdir(REQUESTS_DIR) if f.startswith("request_") and f.endswith(".json")]
