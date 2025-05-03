@@ -1,0 +1,15 @@
+cpu: 3
+email: Hilbelinka5142@my.uwstout.edu
+expiration: '2025-05-01'
+firewall_services:
+- SSH
+memory: 5
+os: Windows
+password: ByMBp0Z4t4QBXLt5
+password_hash: $6$qT2CzG3lsxMy6/kN$yTUZURFFdvqWKGqXX7Zid9FGy.gMq6kZgqj9w0gi6n3oy2sbPD67Zd9me/CGtClmy7acBDHr.VJy6U/bnisd3/
+reason: test
+requester_first_name: a
+requester_last_name: h
+storage: 65
+username: ah
+vm_name: DELETEME9
