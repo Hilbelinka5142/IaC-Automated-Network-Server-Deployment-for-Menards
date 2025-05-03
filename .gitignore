@@ -5,3 +5,4 @@ Ansible-Playbooks/tmp/*
 automation-frontend/requests/*.json
 /vars/pass.yaml
 automation-frontend/vars.yaml
+/Ansible-Playbooks/tmp/vmip.txt
