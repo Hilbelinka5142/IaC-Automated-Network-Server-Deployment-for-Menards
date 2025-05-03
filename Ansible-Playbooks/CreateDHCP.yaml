@@ -5,7 +5,7 @@
   become: yes
   become_method: runas
   vars_files:
-    - ~/Ansible-Playbooks/vars/pass.yaml
+    - /home/deploymentvm/Ansible-Playbooks/vars/pass.yaml
 # Creates a DHCP scope with running shell commands. Should change name, starting/ending range with variables
   tasks:
     - name: Create DHCP scope

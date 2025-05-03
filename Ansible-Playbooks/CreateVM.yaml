@@ -1,7 +1,7 @@
 ---
 - hosts: esxi
   vars_files:
-    - /home/deploymentvm/Desktop/Automation_frontend/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml
+    - /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml
     - /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/vars/pass.yaml
   become: false
 
@@ -115,19 +115,3 @@
       delegate_to: localhost
       register: vm_creation_result
       ignore_errors: true
-
-# TESTING
-    - name: Schedule VM deletion in 2 minutes (for testing)
-      ansible.builtin.shell: >
-        echo "/usr/bin/ansible-playbook /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/delete_vm.yml > /tmp/delete_log.txt 2>&1" | at now + 2 minutes
-      delegate_to: localhost
-      run_once: true
-      
-    #- name: Print output of scheduled job
-     # debug:
-       # msg: "/usr/bin/ansible-playbook delete_vm.yml | at now + 2 minutes"
-
- #   - name: Schedule VM deletion at 5:00 PM expiration date
-   #   ansible.builtin.command:
-     #   cmd: |
-        #  echo "/usr/bin/ansible-playbook delete_vm.yml" | at 5:00 {{ vm_lifetime_days }}
