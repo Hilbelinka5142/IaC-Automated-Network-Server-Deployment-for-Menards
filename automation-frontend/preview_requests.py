@@ -23,7 +23,7 @@ playbooks = {
     'email': [os.path.join(firewall_dir, 'email_sender.yaml')],
     'inventory': {
         'webserver': os.path.join(ansible_dir, 'inventory'),
-        'firewall': os.path.join(firewall_dir, 'inventory.ini'),
+        'firewall': os.path.join(firewall_dir, 'inventory'),
     }
 }
 
