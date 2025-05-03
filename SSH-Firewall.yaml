@@ -1,0 +1,57 @@
+---
+- name: Configure Fortinet Firewall Policy using SSH
+  hosts: NSAT-Firewall
+  connection: ssh
+  gather_facts: no
+  vars_files:
+    - /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/vars/pass.yaml
+  vars:
+    fortigate_host: "10.0.1.1" 
+    fortigate_username: "Ansible"
+    fortigate_password: "{{ firewall.password }}"
+    policy_id: "4"
+    src_intf: "vlan30"
+    dst_intf: "vlan10"
+    src_addr: "10.0.3.11"
+    dst_addr: "all"
+    service: "SSH"
+
+  tasks:
+    - name: Create Source Address Object
+      ansible.builtin.command: >
+        config firewall address
+        edit "SRC-{{ policy_id }}"
+        set subnet {{ src_addr }} 255.255.255.255
+        next
+        end
+      register: address_output
+
+    - debug:
+        var: address_output.stdout
+
+    - name: Create Firewall Policy
+      ansible.builtin.command: >
+        config firewall policy
+        edit {{ policy_id }}
+        set srcintf "{{ src_intf }}"
+        set dstintf "{{ dst_intf }}"
+        set srcaddr "SRC-{{ policy_id }}"
+        set dstaddr "{{ dst_addr }}"
+        set action accept
+        set schedule always
+        set service "{{ service }}"
+        set logtraffic all
+        set nat enable
+        next
+        end
+      register: policy_output
+
+    - debug:
+        var: policy_output.stdout
+
+    - name: Save Configuration
+      ansible.builtin.command: "execute save"
+      register: save_output
+
+    - debug:
+        var: save_output.stdout

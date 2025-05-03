@@ -1,0 +1,24 @@
+---
+- name: Configure Fortinet Firewall Policy using SSH
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    firewall_host: "{{ hostvars['NSAT-Firewall']['ansible_host'] }}"
+    firewall_user: "{{ hostvars['NSAT-Firewall']['ansible_user'] }}"
+    firewall_password: "{{ hostvars['NSAT-Firewall']['ansible_password'] }}"
+    ansible_python_interpreter: "/home/deploymentvm/Desktop/newenv/bin/python" 
+
+  tasks:
+    - name: Run Python script with host, user, and password arguments
+      ansible.builtin.command: >
+        python3 {{ playbook_dir }}/configure_firewall.py
+        --host {{ firewall_host }}
+        --user {{ firewall_user }}
+        --password {{ firewall_password }}
+      register: script_output
+
+    - name: Show Python script output
+      debug:
+        var: script_output.stdout
