@@ -2,6 +2,6 @@
 *.html
 *temp
 Ansible-Playbooks/tmp/*
-/requests/*.json
+automation-frontend/requests/*.json
 /vars/pass.yaml
 automation-frontend/vars.yaml
