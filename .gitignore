@@ -1,7 +1,7 @@
 *.iso
 *.html
 *temp
-Ansible-Playbooks/tmp/*
+/Ansible-Playbooks/tmp/*
 automation-frontend/requests/*.json
 /vars/pass.yaml
 automation-frontend/vars.yaml
