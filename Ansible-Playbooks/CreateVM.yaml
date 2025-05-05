@@ -1,10 +1,12 @@
 ---
 - hosts: esxi
+  # Load variable files containing dynamic values and credentials
   vars_files:
     - /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml
     - /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/vars/pass.yaml
   become: false
 
+  # Calculate how many days are left before the VM's expiration date
   tasks:
     - name: Calculate duration (days) between now and expiration date
       set_fact:
@@ -45,6 +47,7 @@
       when: os == "Ubuntu"
       delegate_to: localhost
       
+    # Define the correct ISO paths to use for the VM based on selected OS  
     - name: Set ISO paths based on OS
       set_fact:
         os_iso_path: >-
@@ -52,6 +55,7 @@
         unattend_iso_path: >-
           {{ '[VMs] ISOs/' ~ vm_name ~ '_unattend.iso' if os == 'Windows' else '' }}
 
+    #Create the list of virtual CD-ROM drives to mount ISO images to the VM
     - name: Create cdrom list
       set_fact:
         cdrom_list: >-
@@ -88,6 +92,7 @@
             }] if os == 'Windows' else [])
           }}
 
+    # Create and power on a VM with user-defined configuration (OS, memory, CPU, disk, network)
     - name: Create VM based on form input
       community.vmware.vmware_guest:
         hostname: "10.0.1.40"

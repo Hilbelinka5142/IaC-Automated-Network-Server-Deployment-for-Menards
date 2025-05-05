@@ -2,10 +2,13 @@
 - name: Wait for Windows VM to report an IP and write it to a file
   hosts: localhost
   gather_facts: no
+  # Load variables including vm_name from an external YAML file
   vars_files:
     - /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml
 
   tasks:
+
+    # Retrieve VM guest information, including IP address, from vCenter/ESXi
     - name: Get guest info for the VM
       community.vmware.vmware_guest_info:
         hostname: "10.0.1.40"
@@ -15,11 +18,12 @@
         datacenter: "ha-datacenter"
         name: "{{ vm_name }}"
       register: vm_info_result
-      retries: 15
-      delay: 30
+      retries: 15     # Retry the task up to 15 times
+      delay: 30       # Wait 30 seconds between each retry
       until: vm_info_result.instance.ipv4 is defined and vm_info_result.instance.ipv4 != ""
       delegate_to: localhost
 
+    # Write the acquired IP address to a text file on the Ansible controller
     - name: Output IP address of VM to file
       copy:
         content: "{{ vm_info_result.instance.ipv4 }}"

@@ -2,20 +2,22 @@
 - name: Delete a Virtual Machine if it exists
   hosts: localhost
   gather_facts: no
+  # Load shared variables including VM name and ESXi credentials
   vars_files:
     - /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/vars.yaml
     - /home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/vars/pass.yaml
 
   tasks:
-  
+    # DEBUG: Output the VM name for verification
     - name: DEBUG - Show vm_name
       debug:
         var: vm_name
-  
+    # DEBUG: Show whether vm_name is defined (adds safety for troubleshooting)
     - name: Show if vm_name is defined
       debug:
         msg: "vm_name is set to {{ vm_name | default('undefined') }}"
 
+    # Check if the specified VM exists in vSphere
     - name: Check if VM exists
       community.vmware.vmware_guest_info:
         hostname: "10.0.1.40"
@@ -28,15 +30,17 @@
       failed_when: false
       delegate_to: localhost
       
+    # DEBUG: Show complete info about the VM (if found)  
     - name: Dump vm_info output
       debug:
         var: vm_info
-
+    # Fail early if the VM does not exist or the name does not match
     - name: Fail if VM was not found
       ansible.builtin.fail:
         msg: "VM '{{ vm_name }}' not found. Cannot delete."
       when: vm_info is not defined or vm_info.failed is defined and vm_info.failed or vm_info.instance is not defined or vm_info.instance.hw_name != vm_name
 
+    # Power off the VM before deletion (required by vSphere)
     - name: Power off VM if it is running
       community.vmware.vmware_guest_powerstate:
         hostname: "10.0.1.40"
@@ -49,6 +53,7 @@
       when: vm_info.instance.hw_power_status == "poweredOn"
       delegate_to: localhost
 
+    # Delete the VM from the ESXi host
     - name: Delete the VM
       community.vmware.vmware_guest:
         hostname: "10.0.1.40"
@@ -60,6 +65,7 @@
         state: absent
       delegate_to: localhost
 
+     # Confirm successful deletion of the VM
     - name: Confirm deletion
       debug:
         msg: "VM '{{ vm_name }}' has been deleted successfully."

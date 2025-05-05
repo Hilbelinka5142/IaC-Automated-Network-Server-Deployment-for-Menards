@@ -3,7 +3,10 @@ from netmiko import ConnectHandler
 from datetime import datetime
 
 def get_expired_schedules(net_connect):
-    """Get all onetime schedules and filter out the expired ones."""
+    """
+    Connects to the firewall and retrieves onetime schedules.
+    Parses them and returns a list of expired schedule names.
+    """
     schedule_output = net_connect.send_command("show firewall schedule onetime")
     expired_schedules = []
 

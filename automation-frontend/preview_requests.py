@@ -12,11 +12,13 @@ base_dir = os.path.dirname(__file__)
 ansible_dir = os.path.expanduser("/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks")
 firewall_dir = os.path.expanduser("/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Firewall")
 frontend_dir = os.path.expanduser("/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend")
+
+# Mapping of relevant Ansible playbooks and inventory files
 playbooks = {
     'webserver': [
-        os.path.join(ansible_dir, 'CreateVM.yaml'), 
-        os.path.join(ansible_dir, 'CreateDNS.yaml'),
-        os.path.join(ansible_dir, 'getVMIP.yaml')
+        os.path.join(ansible_dir, 'CreateVM.yaml'),   # Creates a VM
+        os.path.join(ansible_dir, 'CreateDNS.yaml'),  # Configures DNS (optional/disabled)
+        os.path.join(ansible_dir, 'getVMIP.yaml')     # Fetches VM's IP
         ],
     'request': [os.path.join(base_dir, 'requests')],
     'firewall': [os.path.join(firewall_dir, 'fortinet_policy_change.yaml')],
@@ -28,24 +30,34 @@ playbooks = {
 }
 
 
-# Load latest request JSON and save to vars.yaml
+# -----------------------------
+# Load Latest Request and Save as YAML
+# -----------------------------
+# Get list of JSON request files and load the most recent one
 request_files = sorted([f for f in os.listdir(playbooks["request"][0]) if f.endswith('.json')], reverse=True)
 if not request_files:
     print("No request files found.")
     exit(1)
+
+# Load latest request data
 latest_request = request_files[0]
 request_path = os.path.join(playbooks["request"][0], latest_request)
 with open(request_path, 'r') as f:
     request_data = json.load(f)
 print(f"Loaded latest request: {latest_request}")
 print(json.dumps(request_data, indent=4))
+
+# Convert the loaded JSON request to a vars.yaml file for use in Ansible
 vars_yaml_path = os.path.join(os.path.dirname(__file__), 'vars.yaml')
 with open(vars_yaml_path, 'w') as f:
     yaml.dump(request_data, f)
 print(f"Converted data saved to: {vars_yaml_path}")
 
 
-# Function to run ansible-playbook
+# -----------------------------
+# Function: runPlaybook
+# -----------------------------
+# Executes an Ansible playbook with a given inventory
 def runPlaybook(playbook, inventoryPath):
     try:
         results = subprocess.run([
@@ -62,8 +74,10 @@ def runPlaybook(playbook, inventoryPath):
         return False
     return True
 
-# Gets custom inputs and creates unattend.iso file for Windows machine
-# Windows: Generate unattend.iso
+# -----------------------------
+# Function: generate_autounattend_iso
+# -----------------------------
+# Generates a Windows installation ISO with a customized autounattend.xml file
 def generate_autounattend_iso(xml_template_path, yaml_input_path, output_iso_path):
     with open(yaml_input_path, "r") as f:
         input_data = yaml.safe_load(f)
@@ -79,22 +93,29 @@ def generate_autounattend_iso(xml_template_path, yaml_input_path, output_iso_pat
         print(f"autounattend ISO created: {output_iso_path}")
 
 
-# Ubuntu: Generate ubuntu-autoinstall.iso
+# -----------------------------
+# Function: generate_ubuntu_autoinstall_iso
+# -----------------------------
+# Generates an Ubuntu autoinstall ISO by calling a frontend script
 def generate_ubuntu_autoinstall_iso():
     subprocess.run(["python3", os.path.join(frontend_dir, "generate_ubuntu_iso.py")], check=True)
 
 
-# Main VM creation flow and checks vm status
+# -----------------------------
+# Function: createVM
+# -----------------------------
+# Core function that automates the full VM provisioning process
 def createVM():
     print("Starting VM creation...")
+
+    
     vars_file = os.path.join(frontend_dir, 'vars.yaml')
     with open(vars_file, 'r') as f:
         os_data = yaml.safe_load(f)
         selected_os = os_data.get("os", "").lower()
-#debug command
     print(f"OS selected from vars.yaml: {selected_os}")
 
-    # Conditionally generate install media
+    # Generate the appropriate installation media based on OS
     if selected_os == "windows":
         generate_autounattend_iso(
             os.path.join(ansible_dir, 'autounattendTEMPLATE.xml'),
@@ -111,35 +132,33 @@ def createVM():
     if not runPlaybook(playbooks["webserver"][0], playbooks["inventory"]["webserver"]):
         return
     
-    # Wait up to 2100 seconds (35 minutes) for the VM IP file
+    # Wait up to 35 minutes to give time for provisioning before attempting IP fetch
     ip_file_path = os.path.join(ansible_dir, 'tmp/vmip.txt')
     vmIP = ""
     max_wait_time = 2100  # in seconds
-
     print("Waiting for VM IP to be written to vmip.txt...")
     time.sleep(max_wait_time)
     
-    # Run get vm ip playbook
+    # Run playbook to retrieve the VM IP
     if not runPlaybook(playbooks["webserver"][2], playbooks["inventory"]["webserver"]):
         return
 
-    # Read the IP from the file
+    # Read IP address from file
     try:
         with open(ip_file_path, 'r') as f:
             vmIP = f.read().strip()
     except Exception as e:
         print(f"Failed to read VM IP: {e}")
         return
-    
     print(f"VM IP retrieved: {vmIP}")
     
-    # Run firewall playbook    
+    # Apply firewall policy updates via Ansible   
     if not runPlaybook(playbooks["firewall"][0], playbooks["inventory"]["firewall"]):
         return
         
     # Runs DNS playbook (disabled)
-    # if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]): #TODO: need to make sure playbook collects correct VM data once it boots
-    #     return #stops if playbook fails
+    # if not runPlaybook(playbooks["webserver"][1], playbooks["inventory"]["webserver"]):
+    #     return
 
 
     # Finally, send the credentials via email
@@ -148,7 +167,8 @@ def createVM():
     else:
         print("Credentials have been emailed to the user.")
 
-    # Run the Apache deployment playbook with the dynamic IP **only if OS is Ubuntu**
+    # (Optional future feature) Apache deployment if OS is Ubuntu
+    '''# Run the Apache deployment playbook with the dynamic IP **only if OS is Ubuntu**
     if selected_os == "ubuntu":
         with open(vars_file, 'r') as f:
             vars_data = yaml.safe_load(f)
@@ -170,8 +190,13 @@ def createVM():
             print("Failed to deploy Apache to the VM.")
             return
     else:
-        print("Skipping Apache deployment since OS is not Ubuntu.")
+        print("Skipping Apache deployment since OS is not Ubuntu.")'''
 
+    # Final confirmation
     print(f"Your VM was successfully created with the IP address of: {vmIP}")
 
+# -----------------------------
+# Entry point
+# -----------------------------
+# Trigger the main provisioning workflow
 createVM()

@@ -5,12 +5,14 @@
   gather_facts: no
 
   vars:
+    # Define variables from hostvars (assumes 'NSAT-Firewall' is defined in inventory)
     firewall_host: "{{ hostvars['NSAT-Firewall']['ansible_host'] }}"
     firewall_user: "{{ hostvars['NSAT-Firewall']['ansible_user'] }}"
     firewall_password: "{{ hostvars['NSAT-Firewall']['ansible_password'] }}"
     ansible_python_interpreter: "/home/deploymentvm/Desktop/newenv/bin/python" 
 
   tasks:
+    # Executes an external script (configure_firewall.py) with CLI arguments
     - name: Run Python script with host, user, and password arguments
       ansible.builtin.command: >
         python3 {{ playbook_dir }}/configure_firewall.py

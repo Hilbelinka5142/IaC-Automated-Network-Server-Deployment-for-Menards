@@ -8,7 +8,10 @@ from netmiko import ConnectHandler
 REQUESTS_DIR = "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/requests"
 
 def get_latest_json_file():
-    """Return the most recent JSON request file based on timestamp in filename."""
+    """ 
+    Retrieves the latest JSON request file from the requests directory.
+    Assumes files are named in timestamped format such as request_YYYYMMDD-HHMMSS.json.
+    """
     files = [
         f for f in os.listdir(REQUESTS_DIR)
         if f.startswith("request_") and f.endswith(".json")
@@ -16,19 +19,25 @@ def get_latest_json_file():
     if not files:
         raise FileNotFoundError("No request files found in the 'requests' directory.")
 
-    # Sort by filename timestamp
+    # Return the file with the most recent timestamp in the filename
     files.sort(reverse=True)
     return os.path.join(REQUESTS_DIR, files[0])
 
 
 def load_config():
-    """Load configuration from the latest JSON file and external IP source."""
+    """
+    Loads configuration data from:
+    - The latest user request JSON file (for expiration date and firewall services)
+    - A temporary file containing the source VM's IP address
+    Returns a dictionary of necessary config values.
+    """
     try:
-        # Load IP from external file
+        # Read the VM's IP address from a temporary file
         ip_file_path = "/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/Ansible-Playbooks/tmp/vmip.txt"
         with open(ip_file_path, "r") as ip_file:
             src_ip = ip_file.read().strip()  # Remove any newlines or spaces
 
+        # Load user request data
         config_file = get_latest_json_file()
         print(f"Loading configuration from: {config_file}")
         with open(config_file, "r") as file:
@@ -43,7 +52,10 @@ def load_config():
         return None
 
 def get_next_policy_id(net_connect):
-    """Retrieve the next available policy ID on the firewall."""
+    """
+    Determines the next available firewall policy ID by checking existing ones.
+    Returns the next integer policy ID.
+    """
     output = net_connect.send_command("show firewall policy")
     
     policy_ids = []
@@ -59,7 +71,12 @@ def get_next_policy_id(net_connect):
     return next_policy_id
 
 def configure_fortinet_firewall(config, host, user, password):
-    """Connects to the Fortinet firewall and applies configurations dynamically."""
+    """
+    Connects to a Fortinet firewall via SSH and:
+    - Creates a one-time schedule for access
+    - Creates a source address object for the VM
+    - Dynamically adds a policy allowing traffic from VM to internal services
+    """
     
     # Establish SSH connection using Netmiko
     fortigate = {

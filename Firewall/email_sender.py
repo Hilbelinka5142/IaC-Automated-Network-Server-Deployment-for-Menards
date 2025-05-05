@@ -7,6 +7,10 @@ from email.message import EmailMessage
 REQUESTS_DIR ="/home/deploymentvm/Desktop/IaC-Automated-Network-Server-Deployment-for-Menards/automation-frontend/requests"
 
 def get_latest_json_file():
+    """
+    Returns the most recent JSON request file by sorting filenames in reverse order.
+    Assumes files are named like 'request_YYYYMMDD-HHMMSS.json'.
+    """
     files = [f for f in os.listdir(REQUESTS_DIR) if f.startswith("request_") and f.endswith(".json")]
     if not files:
         raise FileNotFoundError("No request files found in the 'requests' directory.")
@@ -14,6 +18,10 @@ def get_latest_json_file():
     return os.path.join(REQUESTS_DIR, files[0])
 
 def load_credentials():
+    """
+    Loads user credentials (email, username, password) from the latest request JSON file.
+    Returns a dictionary with those values.
+    """
     path = get_latest_json_file()
     with open(path, "r") as file:
         data = json.load(file)
@@ -24,6 +32,10 @@ def load_credentials():
         }
 
 def send_email(email, username, password):
+    """
+    Sends an email with VM login credentials to the user.
+    Uses Gmail's SMTP server with an app password (not user password).
+    """
     sender = "nsat.no.reply@gmail.com"
     sender_password = "smafaffdtfyptihj"  # No spaces
 
