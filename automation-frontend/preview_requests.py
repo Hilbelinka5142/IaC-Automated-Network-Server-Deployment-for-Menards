@@ -135,9 +135,9 @@ def createVM():
     # Wait up to 35 minutes to give time for provisioning before attempting IP fetch
     ip_file_path = os.path.join(ansible_dir, 'tmp/vmip.txt')
     vmIP = ""
-    max_wait_time = 2100  # in seconds
+    """max_wait_time = 2100  # in seconds
     print("Waiting for VM IP to be written to vmip.txt...")
-    time.sleep(max_wait_time)
+    time.sleep(max_wait_time)"""
     
     # Run playbook to retrieve the VM IP
     if not runPlaybook(playbooks["webserver"][2], playbooks["inventory"]["webserver"]):
