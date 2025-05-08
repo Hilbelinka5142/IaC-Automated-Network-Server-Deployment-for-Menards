@@ -1,5 +1,4 @@
 *.iso
-*.html
 *temp
 /Ansible-Playbooks/tmp/*
 automation-frontend/requests/*.json
